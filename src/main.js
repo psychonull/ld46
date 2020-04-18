@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 
-import HelloWorldScene from '/scenes/HelloWorldScene';
+// Scenes
+import World from '/scenes/World';
+
+// const canvas = document.getElementById('game');
 
 const config = {
   type: Phaser.AUTO,
@@ -9,10 +12,12 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 200 }
+      gravity: { y: 0 }
     }
   },
-  scene: [HelloWorldScene]
+  scene: [World]
 };
 
-export default new Phaser.Game(config);
+const game = new Phaser.Game(config);
+
+export default game;

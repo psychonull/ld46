@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-export default class HelloWorldScene extends Phaser.Scene {
+class World extends Phaser.Scene {
   constructor() {
     super('hello-world');
   }
@@ -33,3 +33,5 @@ export default class HelloWorldScene extends Phaser.Scene {
     emitter.startFollow(logo);
   }
 }
+
+export default World;
