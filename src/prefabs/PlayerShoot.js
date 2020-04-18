@@ -14,6 +14,9 @@ class PlayerShoot {
     this.selectVel = 250;
     this.selectTime = 100;
     this.moveVel = 200;
+    this.angularVel = 100;
+    this.width = 30;
+    this.height = 10;
 
     this.group = this.scene.add.group();
     this.physicsGroup = this.scene.physics.add.group();
@@ -48,12 +51,18 @@ class PlayerShoot {
 
   // creates a new bullet
   fire(pos, dir) {
-    const shoot = this.scene.add.rectangle(pos.x, pos.y, 10, 10, this.color);
+    const shoot = this.scene.add.rectangle(
+      pos.x,
+      pos.y,
+      this.width,
+      this.height,
+      this.color
+    );
     shoot.id = this.newId();
 
     this.physicsGroup.add(shoot);
+
     shoot.body.setVelocity(dir.x * this.moveVel, dir.y * this.moveVel);
-    shoot.body.setBounce(1, 1);
     shoot.body.setCollideWorldBounds(true);
 
     this.group.add(shoot);
@@ -73,11 +82,19 @@ class PlayerShoot {
     }
 
     if (this.selectedBullet) {
+      this.selectedBullet.body.angularVelocity = 0;
+
       if (this.input.get(PLAYER_INPUT.projectile_left)) {
-        this.selectedBullet.body.setVelocityX(this.moveVel * -1);
+        this.selectedBullet.body.angularVelocity = this.angularVel * -1;
       } else if (this.input.get(PLAYER_INPUT.projectile_right)) {
-        this.selectedBullet.body.setVelocityX(this.moveVel);
+        this.selectedBullet.body.angularVelocity = this.angularVel;
       }
+
+      this.scene.physics.velocityFromRotation(
+        this.selectedBullet.rotation,
+        this.moveVel,
+        this.selectedBullet.body.velocity
+      );
     }
   }
 }
