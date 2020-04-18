@@ -6,7 +6,7 @@
 		"start": "parcel src/index.html -p 8000",
 		"build": "parcel build src/index.html --out-dir dist",
 		"lint": "eslint src/**/*.{js,jsx} --fix",
-		"prettier": "prettier --single-quote --write src/**/*.{js,jsx,json,css,scss,md}"
+		"prettier": "prettier --single-quote --trailing-comma none --write src/**/*.{js,jsx,json,css,scss,md}"
 	},
 	"author": "psychonull",
 	"license": "MIT",
@@ -48,6 +48,9 @@
 		}
 	},
 	"lint-staged": {
-		"src/**/*.{js,css,md}": "prettier --write"
+		"src/**/*.{js,css,md}": [
+      "npm run prettier",
+      "npm run lint"
+    ]
 	}
 }

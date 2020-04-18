@@ -3,16 +3,15 @@ import Phaser from 'phaser';
 // Scenes
 import World from '/scenes/World';
 
-// const canvas = document.getElementById('game');
-
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  // width: 800,
+  // height: 600,
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 0 }
+      gravity: { y: 0 },
+      debug: true
     }
   },
   scene: [World]

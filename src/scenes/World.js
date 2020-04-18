@@ -1,36 +1,39 @@
 import Phaser from 'phaser';
+import Player from '/prefabs/Player';
 
 class World extends Phaser.Scene {
   constructor() {
-    super('hello-world');
+    super('LD#46');
   }
 
-  preload() {
-    this.load.setBaseURL('http://labs.phaser.io');
-
-    this.load.image('sky', 'assets/skies/space3.png');
-    this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-    this.load.image('red', 'assets/particles/red.png');
-  }
+  preload() {}
 
   create() {
-    this.add.image(400, 300, 'sky');
+    const input = this.input.keyboard;
+    const key = Phaser.Input.Keyboard.KeyCodes;
 
-    const particles = this.add.particles('red');
-
-    const emitter = particles.createEmitter({
-      speed: 100,
-      scale: { start: 1, end: 0 },
-      blendMode: 'ADD'
+    this.player = new Player({
+      scene: this,
+      input: {
+        player: {
+          fire: input.addKey(key.SPACE),
+          left: input.addKey(key.LEFT),
+          right: input.addKey(key.RIGHT),
+          down: input.addKey(key.DOWN),
+          up: input.addKey(key.UP)
+        },
+        bullets: {
+          left: input.addKey(key.A),
+          right: input.addKey(key.D),
+          next: input.addKey(key.W),
+          prev: input.addKey(key.S)
+        }
+      }
     });
+  }
 
-    const logo = this.physics.add.image(400, 100, 'logo');
-
-    logo.setVelocity(100, 200);
-    logo.setBounce(1, 1);
-    logo.setCollideWorldBounds(true);
-
-    emitter.startFollow(logo);
+  update() {
+    this.player.update();
   }
 }
 
