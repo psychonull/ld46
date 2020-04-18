@@ -13,7 +13,13 @@ const config = {
     gamepad: true
   },
   plugins: {
-    scene: [{ key: 'inputManager', plugin: InputManagerPlugin, mapping: 'i' }]
+    scene: [
+      {
+        key: 'inputManager',
+        plugin: InputManagerPlugin,
+        mapping: 'customInput'
+      }
+    ]
   },
   physics: {
     default: 'arcade',

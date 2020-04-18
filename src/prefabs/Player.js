@@ -1,11 +1,12 @@
 import PlayerShoot from '/prefabs/PlayerShoot';
 
 import { random } from '/utils/math';
+import PLAYER_INPUT from '../utils/PlayerInputEnum';
 
 class Player {
   constructor({ scene, input }) {
     this.scene = scene;
-    this.input = input.player;
+    this.input = input;
 
     this.bulletTime = 0;
     this.bulletFireVel = 250;
@@ -17,7 +18,7 @@ class Player {
 
     this.bullets = new PlayerShoot({
       scene: scene,
-      input: input.bullets
+      input
     });
   }
 
@@ -36,19 +37,19 @@ class Player {
   update() {
     this.player.body.setVelocity(0);
 
-    if (this.input.fire.isDown) {
+    if (this.input.get(PLAYER_INPUT.projectile_shoot)) {
       this.tryFire();
     }
 
-    if (this.input.left.isDown) {
+    if (this.input.get(PLAYER_INPUT.left)) {
       this.player.body.setVelocityX(this.moveVel * -1);
-    } else if (this.input.right.isDown) {
+    } else if (this.input.get(PLAYER_INPUT.right)) {
       this.player.body.setVelocityX(this.moveVel);
     }
 
-    if (this.input.up.isDown) {
+    if (this.input.get(PLAYER_INPUT.up)) {
       this.player.body.setVelocityY(this.moveVel * -1);
-    } else if (this.input.down.isDown) {
+    } else if (this.input.get(PLAYER_INPUT.down)) {
       this.player.body.setVelocityY(this.moveVel);
     }
 

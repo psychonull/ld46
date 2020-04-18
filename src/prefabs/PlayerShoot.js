@@ -1,4 +1,5 @@
 import { counter } from '/utils/math';
+import PLAYER_INPUT from '../utils/PlayerInputEnum';
 
 // GameObject Factory to manage all shoots for one player
 class PlayerShoot {
@@ -64,14 +65,17 @@ class PlayerShoot {
   }
 
   update() {
-    if (this.input.next.isDown || this.input.prev.isDown) {
-      this.select(this.input.next.isDown ? 1 : -1);
+    if (
+      this.input.get(PLAYER_INPUT.projectile_next) ||
+      this.input.get(PLAYER_INPUT.projectile_previous)
+    ) {
+      this.select(this.input.get(PLAYER_INPUT.projectile_next) ? 1 : -1);
     }
 
     if (this.selectedBullet) {
-      if (this.input.left.isDown) {
+      if (this.input.get(PLAYER_INPUT.projectile_left)) {
         this.selectedBullet.body.setVelocityX(this.moveVel * -1);
-      } else if (this.input.right.isDown) {
+      } else if (this.input.get(PLAYER_INPUT.projectile_right)) {
         this.selectedBullet.body.setVelocityX(this.moveVel);
       }
     }
