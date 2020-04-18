@@ -1,0 +1,32 @@
+{
+	"name": "ld46",
+	"version": "1.0.0",
+	"description": "A template project for Phaser3 using Parceljs",
+	"scripts": {
+		"start": "parcel src/index.html -p 8000",
+		"build": "parcel build src/index.html --out-dir dist",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "psychonull",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/psychonull/ld46.git"
+	},
+	"homepage": "https://github.com/psychonull/ld46",
+	"devDependencies": {
+		"parcel-plugin-clean-easy": "^1.0.2",
+		"parcel-plugin-static-files-copy": "^2.2.1",
+		"minimist": ">=1.2.2"
+	},
+	"dependencies": {
+		"phaser": "^3.22.0"
+	},
+	"parcelCleanPaths": [
+		"dist"
+	],
+	"staticFiles": {
+		"staticPath": "public",
+		"watcherGlob": "**"
+	}
+}
