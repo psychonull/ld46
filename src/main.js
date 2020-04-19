@@ -38,4 +38,16 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+const helpPopup = document.getElementById('help-popup');
+window.document.getElementById('help-button').addEventListener('click', (e) => {
+  e.preventDefault();
+  helpPopup.classList.remove('hidden');
+});
+window.document
+  .getElementById('help-close-button')
+  .addEventListener('click', (e) => {
+    e.preventDefault();
+    helpPopup.classList.add('hidden');
+  });
+
 export default game;
