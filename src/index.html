@@ -14,12 +14,115 @@
       canvas {
         margin:auto;
         padding:0;
-        height: 100%;
-        border: 1px solid gray;
+        height: 95%;
+      }
+      .menu {
+        margin:auto;
+        padding:0;
+        max-height: 3%;
+        text-align: justify;
+        padding-left: 100px;
+      }
+      .hidden {
+        display: none;
+      }
+      #help-popup {
+        background-color: #030303;
+        color: #ACACAC;
+        border: 4px dotted turquoise;
+        padding: 10px;
+        max-width: 70%;
+        position: absolute;
+        top: 50px;
+        font-family: monospace;
+        font-size: 1.2em;
+      }
+      #help-popup code {
+        padding: 4px;
+        color: purple;
+        font-weight: bold;
+        font-family: monospace;
+        font-size: larger;
+        background-color: #0A0A0A;
+      }
+      h1, h2 {
+        margin: 5px;
+      }
+      a {
+        color: yellowgreen;
+        font-weight: bold;
+      }
+      a:hover {
+        color: yellow;
       }
     </style>
 	</head>
 	<body>
-		<script src="main.js"></script>
+    <div class="menu">
+      <a href="#" id="help-button">WTF?</a>
+    </div>
+    <div id="help-popup" class="hidden">
+      <div class="obj">
+        <h1>Objective</h1>
+        <p>Avoid enemy projectiles while shooting and commanding yours</p>
+      </div>
+      <div class="controls">
+        <h1>Controls</h1>
+        <div>
+          <h2>Player 1</h2>
+          <ul style="list-style: none;">
+            <li>
+              Movement: <code>A</code>,<code>S</code>,<code>D</code>,<code>W</code>,
+            </li>
+            <li>
+              Turn projectile left/right: <code>F</code>,<code>H</code>
+            </li>
+            <li>
+              Projectile selection (previous/next): <code>T</code>,<code>G</code>
+            </li>
+            <li>
+              Shoot projectile: <code>J</code>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2>Player 2</h2>
+          <ul style="list-style: none;">
+            <li>
+              Movement: <code>Arrow Left</code>,<code>Arrow Down</code>,<code>Arrow Right</code>,<code>Arrow Up</code>,
+            </li>
+            <li>
+              Turn projectile left/right: <code>numpad 1</code>,<code>numpad 3</code>
+            </li>
+            <li>
+              Projectile selection (previous/next): <code>numpad 5</code>,<code>numpad 2</code>
+            </li>
+            <li>
+              Shoot projectile: <code>numpad 6</code>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <h2>Gamepad support</h2>
+        <p>Most twin stick gamepads should be supported, thought it's not widely tested</p>
+        <ul style="list-style: none;">
+          <li>
+            Movement: <code>Left stick</code>,
+          </li>
+          <li>
+            Turn projectile left/right: <code>Right stick</code>
+          </li>
+          <li>
+            Projectile selection (previous/next): <code>LB</code>,<code>RB</code>
+          </li>
+          <li>
+            Shoot projectile: <code>RT</code>
+          </li>
+        </ul>
+      </div>
+      <a href="#" id="help-close-button">CLOSE</a>
+    </div>
+    <script src="main.js"></script>
 	</body>
 </html>
