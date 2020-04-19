@@ -55,7 +55,9 @@ class PlayerShoot {
         this.selectedBullet = this.group.getFirstAlive();
       }
 
-      this.selectedBullet.setFillStyle(this.selectedColor);
+      if (this.selectedBullet)
+        this.selectedBullet.setFillStyle(this.selectedColor);
+
       this.selectTime = this.scene.game.getTime() + this.selectVel;
     }
   }
@@ -86,6 +88,16 @@ class PlayerShoot {
       this.thrust * Math.cos(shoot.rotation),
       this.thrust * Math.sin(shoot.rotation)
     );
+
+    shoot.setOnCollide((/*{ bodyA, bodyB }*/) => {
+      this.scene.matter.world.remove(shoot);
+      this.group.killAndHide(shoot);
+      this.group.remove(shoot);
+
+      if (this.selectedBullet.id === shoot.id) {
+        this.selectedBullet = null;
+      }
+    });
 
     this.group.add(shoot);
 
