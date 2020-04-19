@@ -36,18 +36,33 @@ class Player {
     });
 
     this.playerHalo = this.scene.add.circle(x, y, this.haloRadius);
-    this.playerHalo.setStrokeStyle(3, color, 0.1);
+    this.playerHalo.setStrokeStyle(2, 0xffffff, 1);
+    this.playerHalo.setAlpha(0);
+
+    const showHalo = this.scene.tweens.add({
+      targets: this.playerHalo,
+      alpha: { start: 0, to: 0.3 },
+      scale: { start: 0.7, to: 1.1 },
+      ease: 'Bounce',
+      duration: 200,
+      repeat: 0,
+      yoyo: true
+    });
 
     this.scene.matter.add
       .gameObject(this.playerHalo, {
         label: `halo-${this.number}`,
         circleRadius: this.haloRadius,
-        frictionAir: 0
-        // density: 0.001
+        frictionAir: 0,
+        friction: 0,
+        density: 0.00001
       })
       .setBounce(1)
       .setCollisionCategory(collisionGroups.playerHalos)
-      .setCollidesWith(collisionGroups.playerHalos);
+      .setCollidesWith(collisionGroups.playerHalos)
+      .setOnCollide(() => {
+        showHalo.restart();
+      });
 
     this.scene.matter.add.constraint(this.player, this.playerHalo, 0);
 
@@ -104,9 +119,6 @@ class Player {
     } else if (this.input.get(PLAYER_INPUT.down)) {
       this.player.thrustRight(this.moveVel);
     }
-
-    // this.playerHalo.x = this.player.x;
-    // this.playerHalo.y = this.player.y;
 
     this.bullets.update();
   }
