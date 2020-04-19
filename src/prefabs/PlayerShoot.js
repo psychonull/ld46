@@ -3,9 +3,18 @@ import PLAYER_INPUT from 'utils/PlayerInputEnum';
 
 // GameObject Factory to manage all shoots for one player
 class PlayerShoot {
-  constructor({ scene, input, color = 0xaa0000, selectedColor = 0xff0000 }) {
+  constructor({
+    scene,
+    input,
+    collisionCategory,
+    playerNumber,
+    color = 0xaa0000,
+    selectedColor = 0xff0000
+  }) {
     this.scene = scene;
     this.input = input;
+    this.collisionCategory = collisionCategory;
+    this.playerNumber = playerNumber;
 
     this.newId = counter(1);
     this.color = color;
@@ -63,13 +72,15 @@ class PlayerShoot {
 
     shoot.id = this.newId();
 
-    this.scene.matter.add.gameObject(shoot, {
-      label: 'player-shoot',
-      friction: 0,
-      drag: 0,
-      frictionAir: 0,
-      angle
-    });
+    this.scene.matter.add
+      .gameObject(shoot, {
+        label: `player-shoot-${this.playerNumber}`,
+        friction: 0,
+        drag: 0,
+        frictionAir: 0,
+        angle
+      })
+      .setCollisionCategory(this.collisionCategory);
 
     shoot.setVelocity(
       this.thrust * Math.cos(shoot.rotation),

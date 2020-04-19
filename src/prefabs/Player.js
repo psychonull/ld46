@@ -3,9 +3,10 @@ import PlayerShoot from '/prefabs/PlayerShoot';
 import PLAYER_INPUT from 'utils/PlayerInputEnum';
 
 class Player {
-  constructor({ scene, input, color = 0x00ff00, x = 30, y = 30 }) {
+  constructor({ scene, input, number, color = 0x00ff00, x = 30, y = 30 }) {
     this.scene = scene;
     this.input = input;
+    this.number = number;
     this.data = new Phaser.Data.DataManager(
       this,
       new Phaser.Events.EventEmitter()
@@ -16,20 +17,27 @@ class Player {
     this.moveVel = 0.03;
     this.radius = 15;
 
+    this.collisionCategory = this.scene.matter.world.nextCategory();
+    this.shootCollisionCategory = this.scene.matter.world.nextCategory();
+
     this.player = this.scene.add.circle(x, y, this.radius, color);
-    this.scene.matter.add.gameObject(this.player, {
-      label: 'player',
-      circleRadius: this.radius,
-      frictionAir: 0.1,
-      density: 0.02
-    });
+    this.matterPlayer = this.scene.matter.add
+      .gameObject(this.player, {
+        label: `player-${this.number}`,
+        circleRadius: this.radius,
+        frictionAir: 0.1,
+        density: 0.02
+      })
+      .setCollisionCategory(this.collisionCategory);
 
     this.player.setFixedRotation();
 
     this.bullets = new PlayerShoot({
       scene: scene,
       input,
-      color
+      color,
+      collisionCategory: this.shootCollisionCategory,
+      playerNumber: this.number
     });
   }
 
@@ -56,7 +64,6 @@ class Player {
       );
 
       this.bulletTime = this.scene.game.getTime() + this.bulletFireVel;
-      this.data.set('score', Number(this.data.get('score') || 0) + 1); // TODO: Remove this
     }
   }
 
