@@ -3,13 +3,13 @@ import PLAYER_INPUT from '../utils/PlayerInputEnum';
 
 // GameObject Factory to manage all shoots for one player
 class PlayerShoot {
-  constructor({ scene, input }) {
+  constructor({ scene, input, color = 0xaa0000, selectedColor = 0xff0000 }) {
     this.scene = scene;
     this.input = input;
 
     this.newId = counter(1);
-    this.color = 0xff0000;
-    this.selectedColor = 0xffff00;
+    this.color = color;
+    this.selectedColor = selectedColor;
     this.selectedBullet = null;
     this.selectVel = 250;
     this.selectTime = 100;

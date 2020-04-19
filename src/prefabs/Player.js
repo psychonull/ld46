@@ -4,7 +4,7 @@ import { random } from '/utils/math';
 import PLAYER_INPUT from '../utils/PlayerInputEnum';
 
 class Player {
-  constructor({ scene, input }) {
+  constructor({ scene, input, color = 0x00ff00, x = 30, y = 30 }) {
     this.scene = scene;
     this.input = input;
 
@@ -12,12 +12,13 @@ class Player {
     this.bulletFireVel = 250;
     this.moveVel = 2;
 
-    this.player = this.scene.add.rectangle(200, 200, 30, 30, 0x00ff00);
+    this.player = this.scene.add.rectangle(x, y, 30, 30, color);
     this.scene.matter.add.gameObject(this.player, { label: 'player' });
 
     this.bullets = new PlayerShoot({
       scene: scene,
-      input
+      input,
+      color
     });
   }
 
