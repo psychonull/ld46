@@ -49,8 +49,8 @@
 	},
 	"lint-staged": {
 		"src/**/*.{js,css,md}": [
-      "npm run prettier",
-      "npm run lint"
-    ]
+			"npm run prettier",
+			"npm run lint"
+		]
 	}
 }

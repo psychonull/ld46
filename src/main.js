@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 
 import World from '/scenes/World';
+import GUI from '/scenes/GUI';
+
 import InputManagerPlugin from '/plugins/inputManager';
 
 const config = {
@@ -30,7 +32,7 @@ const config = {
       }
     }
   },
-  scene: [World]
+  scene: [World, GUI]
 };
 
 const game = new Phaser.Game(config);

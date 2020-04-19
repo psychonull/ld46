@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import PlayerShoot from '/prefabs/PlayerShoot';
 
 import { random } from '/utils/math';
@@ -7,6 +8,10 @@ class Player {
   constructor({ scene, input, color = 0x00ff00, x = 30, y = 30 }) {
     this.scene = scene;
     this.input = input;
+    this.data = new Phaser.Data.DataManager(
+      this,
+      new Phaser.Events.EventEmitter()
+    );
 
     this.bulletTime = 0;
     this.bulletFireVel = 250;
@@ -31,6 +36,7 @@ class Player {
 
       this.bullets.fire(this.player.getCenter(), dir);
       this.bulletTime = this.scene.game.getTime() + this.bulletFireVel;
+      this.data.set('score', Number(this.data.get('score') || 0) + 1); // TODO: Remove this
     }
   }
 
