@@ -6,14 +6,12 @@ class PlayerShoot {
   constructor({
     scene,
     input,
-    collisionCategory,
     playerNumber,
     color = 0xaa0000,
     selectedColor = 0xff0000
   }) {
     this.scene = scene;
     this.input = input;
-    this.collisionCategory = collisionCategory;
     this.playerNumber = playerNumber;
 
     this.newId = counter(1);
@@ -26,6 +24,7 @@ class PlayerShoot {
     this.angularVel = 0.06;
     this.width = 15;
     this.height = 5;
+    this.bulletMaxAlive = 2;
 
     this.group = this.scene.add.group();
   }
@@ -64,6 +63,11 @@ class PlayerShoot {
 
   // creates a new bullet
   fire(pos, angle) {
+    if (this.group.getChildren(true).length >= this.bulletMaxAlive) {
+      // TODO: sound of no more bullets
+      return;
+    }
+
     const shoot = this.scene.add.rectangle(
       pos.x,
       pos.y,
@@ -74,15 +78,13 @@ class PlayerShoot {
 
     shoot.id = this.newId();
 
-    this.scene.matter.add
-      .gameObject(shoot, {
-        label: `player-shoot-${this.playerNumber}`,
-        friction: 0,
-        drag: 0,
-        frictionAir: 0,
-        angle
-      })
-      .setCollisionCategory(this.collisionCategory);
+    this.scene.matter.add.gameObject(shoot, {
+      label: `player-shoot-${this.playerNumber}`,
+      friction: 0,
+      drag: 0,
+      frictionAir: 0,
+      angle
+    });
 
     shoot.setVelocity(
       this.thrust * Math.cos(shoot.rotation),
@@ -94,7 +96,7 @@ class PlayerShoot {
       this.group.killAndHide(shoot);
       this.group.remove(shoot);
 
-      if (this.selectedBullet.id === shoot.id) {
+      if (this.selectedBullet && this.selectedBullet.id === shoot.id) {
         this.selectedBullet = null;
       }
     });

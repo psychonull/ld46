@@ -16,11 +16,16 @@ class World extends Phaser.Scene {
     this.matter.enableCollisionEventsPlugin();
     this.matter.world.setBounds();
 
+    const collisionGroups = {
+      playerHalos: this.matter.world.nextCategory()
+    };
+
     this.players = [
       new Player({
         scene: this,
         input: this.customInput.players[0],
-        number: 1
+        number: 1,
+        collisionGroups
       }),
       new Player({
         scene: this,
@@ -28,7 +33,8 @@ class World extends Phaser.Scene {
         color: 0x0000ff,
         x: 500,
         y: 600,
-        number: 2
+        number: 2,
+        collisionGroups
       })
     ];
 
@@ -106,6 +112,8 @@ class World extends Phaser.Scene {
     const player = this.players.find((p) => p.number === playerNumber);
     if (!player) console.warn('player not found for number', playerNumber);
     player.data.set('score', parseInt(player.data.get('score') || 0, 10) + 1);
+
+    // TODO: Reset Game
   }
 
   // onHitBounds(bullet, bound) {

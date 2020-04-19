@@ -3,7 +3,15 @@ import PlayerShoot from '/prefabs/PlayerShoot';
 import PLAYER_INPUT from 'utils/PlayerInputEnum';
 
 class Player {
-  constructor({ scene, input, number, color = 0x00ff00, x = 30, y = 30 }) {
+  constructor({
+    scene,
+    input,
+    number,
+    color = 0x00ff00,
+    x = 30,
+    y = 30,
+    collisionGroups
+  }) {
     this.scene = scene;
     this.input = input;
     this.number = number;
@@ -16,19 +24,32 @@ class Player {
     this.bulletFireVel = 250;
     this.moveVel = 0.03;
     this.radius = 15;
+    this.haloRadius = this.radius * 10;
 
-    this.collisionCategory = this.scene.matter.world.nextCategory();
-    this.shootCollisionCategory = this.scene.matter.world.nextCategory();
+    this.player = this.scene.add.circle(x, y, this.radius);
+    this.player.setStrokeStyle(3, color, 1);
+    this.scene.matter.add.gameObject(this.player, {
+      label: `player-${this.number}`,
+      circleRadius: this.radius,
+      frictionAir: 0.1,
+      density: 0.02
+    });
 
-    this.player = this.scene.add.circle(x, y, this.radius, color);
-    this.matterPlayer = this.scene.matter.add
-      .gameObject(this.player, {
-        label: `player-${this.number}`,
-        circleRadius: this.radius,
-        frictionAir: 0.1,
-        density: 0.02
+    this.playerHalo = this.scene.add.circle(x, y, this.haloRadius);
+    this.playerHalo.setStrokeStyle(3, color, 0.1);
+
+    this.scene.matter.add
+      .gameObject(this.playerHalo, {
+        label: `halo-${this.number}`,
+        circleRadius: this.haloRadius,
+        frictionAir: 0
+        // density: 0.001
       })
-      .setCollisionCategory(this.collisionCategory);
+      .setBounce(1)
+      .setCollisionCategory(collisionGroups.playerHalos)
+      .setCollidesWith(collisionGroups.playerHalos);
+
+    this.scene.matter.add.constraint(this.player, this.playerHalo, 0);
 
     this.player.setFixedRotation();
 
@@ -83,6 +104,9 @@ class Player {
     } else if (this.input.get(PLAYER_INPUT.down)) {
       this.player.thrustRight(this.moveVel);
     }
+
+    // this.playerHalo.x = this.player.x;
+    // this.playerHalo.y = this.player.y;
 
     this.bullets.update();
   }
