@@ -1,5 +1,5 @@
 import { counter } from '/utils/math';
-import PLAYER_INPUT from '../utils/PlayerInputEnum';
+import PLAYER_INPUT from 'utils/PlayerInputEnum';
 
 // GameObject Factory to manage all shoots for one player
 class PlayerShoot {
@@ -13,31 +13,34 @@ class PlayerShoot {
     this.selectedBullet = null;
     this.selectVel = 250;
     this.selectTime = 100;
-    this.thrust = 5;
+    this.thrust = 4;
     this.angularVel = 0.06;
-    this.width = 30;
-    this.height = 10;
+    this.width = 15;
+    this.height = 5;
 
     this.group = this.scene.add.group();
   }
 
   select(dir) {
     if (this.scene.game.getTime() > this.selectTime) {
-      this.selectedBullet.setFillStyle(this.color);
+      let found;
 
-      const active = true;
-      const found = this.group.getChildren(active).some((item, i) => {
-        if (this.selectedBullet.id == item.id) {
-          const len = this.group.getLength();
-          let nextIndex = dir + i;
+      if (this.selectedBullet) {
+        this.selectedBullet.setFillStyle(this.color);
 
-          if (nextIndex < 0) nextIndex = len - 1;
-          if (nextIndex >= len) nextIndex = 0;
+        found = this.group.getChildren(true).some((item, i) => {
+          if (this.selectedBullet.id == item.id) {
+            const len = this.group.getLength();
+            let nextIndex = dir + i;
 
-          this.selectedBullet = this.group.getChildren()[nextIndex];
-          return true;
-        }
-      });
+            if (nextIndex < 0) nextIndex = len - 1;
+            if (nextIndex >= len) nextIndex = 0;
+
+            this.selectedBullet = this.group.getChildren()[nextIndex];
+            return true;
+          }
+        });
+      }
 
       if (!found) {
         this.selectedBullet = this.group.getFirstAlive();
@@ -49,7 +52,7 @@ class PlayerShoot {
   }
 
   // creates a new bullet
-  fire(pos, dir) {
+  fire(pos, angle) {
     const shoot = this.scene.add.rectangle(
       pos.x,
       pos.y,
@@ -64,10 +67,14 @@ class PlayerShoot {
       label: 'player-shoot',
       friction: 0,
       drag: 0,
-      frictionAir: 0
+      frictionAir: 0,
+      angle
     });
 
-    shoot.setVelocity(dir.x * this.thrust, dir.y * this.thrust);
+    shoot.setVelocity(
+      this.thrust * Math.cos(shoot.rotation),
+      this.thrust * Math.sin(shoot.rotation)
+    );
 
     this.group.add(shoot);
 

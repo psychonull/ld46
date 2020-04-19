@@ -1,8 +1,6 @@
 import Phaser from 'phaser';
 import PlayerShoot from '/prefabs/PlayerShoot';
-
-import { random } from '/utils/math';
-import PLAYER_INPUT from '../utils/PlayerInputEnum';
+import PLAYER_INPUT from 'utils/PlayerInputEnum';
 
 class Player {
   constructor({ scene, input, color = 0x00ff00, x = 30, y = 30 }) {
@@ -15,10 +13,18 @@ class Player {
 
     this.bulletTime = 0;
     this.bulletFireVel = 250;
-    this.moveVel = 2;
+    this.moveVel = 0.03;
+    this.radius = 15;
 
-    this.player = this.scene.add.rectangle(x, y, 30, 30, color);
-    this.scene.matter.add.gameObject(this.player, { label: 'player' });
+    this.player = this.scene.add.circle(x, y, this.radius, color);
+    this.scene.matter.add.gameObject(this.player, {
+      label: 'player',
+      circleRadius: this.radius,
+      frictionAir: 0.1,
+      density: 0.02
+    });
+
+    this.player.setFixedRotation();
 
     this.bullets = new PlayerShoot({
       scene: scene,
@@ -27,36 +33,48 @@ class Player {
     });
   }
 
+  setOpponent(player) {
+    this.opponent = player;
+  }
+
   tryFire() {
     if (this.scene.game.getTime() > this.bulletTime) {
-      const dir = {
-        x: random(-100, 100) / 100,
-        y: random(-100, 100) / 100
-      };
+      let opponentPos = this.opponent.player.getCenter();
+      let playerPos = this.player.getCenter();
 
-      this.bullets.fire(this.player.getCenter(), dir);
+      let dir = Math.atan2(
+        opponentPos.y - playerPos.y,
+        opponentPos.x - playerPos.x
+      );
+
+      this.bullets.fire(
+        {
+          x: playerPos.x + this.radius * 2 * Math.cos(dir),
+          y: playerPos.y + this.radius * 2 * Math.sin(dir)
+        },
+        dir
+      );
+
       this.bulletTime = this.scene.game.getTime() + this.bulletFireVel;
       this.data.set('score', Number(this.data.get('score') || 0) + 1); // TODO: Remove this
     }
   }
 
   update() {
-    this.player.setVelocity(0, 0);
-
     if (this.input.get(PLAYER_INPUT.projectile_shoot)) {
       this.tryFire();
     }
 
     if (this.input.get(PLAYER_INPUT.left)) {
-      this.player.setVelocityX(this.moveVel * -1);
+      this.player.thrustBack(this.moveVel);
     } else if (this.input.get(PLAYER_INPUT.right)) {
-      this.player.setVelocityX(this.moveVel);
+      this.player.thrust(this.moveVel);
     }
 
     if (this.input.get(PLAYER_INPUT.up)) {
-      this.player.setVelocityY(this.moveVel * -1);
+      this.player.thrustLeft(this.moveVel);
     } else if (this.input.get(PLAYER_INPUT.down)) {
-      this.player.setVelocityY(this.moveVel);
+      this.player.thrustRight(this.moveVel);
     }
 
     this.bullets.update();

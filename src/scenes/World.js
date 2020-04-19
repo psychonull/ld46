@@ -35,6 +35,9 @@ class World extends Phaser.Scene {
         y: 600
       })
     ];
+
+    this.players[0].setOpponent(this.players[1]);
+    this.players[1].setOpponent(this.players[0]);
   }
 
   update() {
