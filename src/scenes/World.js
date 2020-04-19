@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Player from '/prefabs/Player';
+import CountDownToStart from '/prefabs/CountDownToStart';
 
 const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
@@ -8,6 +9,7 @@ const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 class World extends Phaser.Scene {
   constructor() {
     super('Game');
+    this.started = false;
   }
 
   preload() {}
@@ -38,6 +40,16 @@ class World extends Phaser.Scene {
       })
     ];
 
+    this.countDownToStart = new CountDownToStart({
+      scene: this,
+      onComplete: () => {
+        this.startGame();
+      }
+    });
+    // this.startGame();
+  }
+
+  startGame() {
     this.players[0].setOpponent(this.players[1]);
     this.players[1].setOpponent(this.players[0]);
 
@@ -95,10 +107,14 @@ class World extends Phaser.Scene {
       },
       this
     );
+    this.scene.launch('gui');
+    this.started = true;
   }
 
   update() {
-    this.players.forEach((player) => player.update());
+    if (this.players) {
+      this.players.forEach((player) => player.update());
+    }
   }
 
   onHitPlayer(bullet) {
