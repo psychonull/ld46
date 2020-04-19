@@ -13,10 +13,18 @@ class World extends Phaser.Scene {
       scene: this,
       input: this.customInput.players[0]
     });
+    this.player2 = new Player({
+      scene: this,
+      input: this.customInput.players[1],
+      color: 0x0000ff,
+      x: 500,
+      y: 600
+    });
   }
 
   update() {
     this.player.update();
+    this.player2.update();
   }
 }
 
