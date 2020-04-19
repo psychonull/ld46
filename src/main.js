@@ -1,9 +1,8 @@
 import Phaser from 'phaser';
 
-// Scenes
 import World from '/scenes/World';
-
 import InputManagerPlugin from '/plugins/inputManager';
+
 const config = {
   pixelArt: true,
   type: Phaser.AUTO,
@@ -22,10 +21,13 @@ const config = {
     ]
   },
   physics: {
-    default: 'arcade',
-    arcade: {
+    default: 'matter',
+    matter: {
       gravity: { y: 0 },
-      debug: true
+      debug: {
+        showBody: true,
+        showStaticBody: true
+      }
     }
   },
   scene: [World]

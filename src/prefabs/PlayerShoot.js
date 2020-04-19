@@ -13,13 +13,12 @@ class PlayerShoot {
     this.selectedBullet = null;
     this.selectVel = 250;
     this.selectTime = 100;
-    this.moveVel = 200;
-    this.angularVel = 100;
+    this.thrust = 5;
+    this.angularVel = 0.06;
     this.width = 30;
     this.height = 10;
 
     this.group = this.scene.add.group();
-    this.physicsGroup = this.scene.physics.add.group();
   }
 
   select(dir) {
@@ -58,12 +57,17 @@ class PlayerShoot {
       this.height,
       this.color
     );
+
     shoot.id = this.newId();
 
-    this.physicsGroup.add(shoot);
+    this.scene.matter.add.gameObject(shoot, {
+      label: 'player-shoot',
+      friction: 0,
+      drag: 0,
+      frictionAir: 0
+    });
 
-    shoot.body.setVelocity(dir.x * this.moveVel, dir.y * this.moveVel);
-    shoot.body.setCollideWorldBounds(true);
+    shoot.setVelocity(dir.x * this.thrust, dir.y * this.thrust);
 
     this.group.add(shoot);
 
@@ -82,18 +86,17 @@ class PlayerShoot {
     }
 
     if (this.selectedBullet) {
-      this.selectedBullet.body.angularVelocity = 0;
+      this.selectedBullet.setAngularVelocity(0);
 
       if (this.input.get(PLAYER_INPUT.projectile_left)) {
-        this.selectedBullet.body.angularVelocity = this.angularVel * -1;
+        this.selectedBullet.setAngularVelocity(this.angularVel * -1);
       } else if (this.input.get(PLAYER_INPUT.projectile_right)) {
-        this.selectedBullet.body.angularVelocity = this.angularVel;
+        this.selectedBullet.setAngularVelocity(this.angularVel);
       }
 
-      this.scene.physics.velocityFromRotation(
-        this.selectedBullet.rotation,
-        this.moveVel,
-        this.selectedBullet.body.velocity
+      this.selectedBullet.setVelocity(
+        this.thrust * Math.cos(this.selectedBullet.rotation),
+        this.thrust * Math.sin(this.selectedBullet.rotation)
       );
     }
   }
