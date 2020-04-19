@@ -1,3 +1,4 @@
+import 'webrtc-adapter';
 import Phaser from 'phaser';
 
 import World from '/scenes/World';

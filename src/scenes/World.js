@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Player from '/prefabs/Player';
+import { createHost, connectToHost } from 'service/peer';
 
 const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
@@ -10,7 +11,23 @@ class World extends Phaser.Scene {
     super('Game');
   }
 
-  preload() {}
+  preload() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = urlParams.get('sid');
+
+    if (clientId) {
+      console.log('--- CLIENT MODE ---');
+      connectToHost(clientId).then((conn) => {
+        console.log('CLIENT CONNECTED!', conn);
+      });
+      return;
+    }
+
+    console.log('--- HOST MODE ---');
+    createHost().then((conn) => {
+      console.log('HOST STARTED!', conn);
+    });
+  }
 
   create() {
     // https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Matter.World.html#setBounds__anchor

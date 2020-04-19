@@ -6,7 +6,9 @@
 		"start": "parcel src/index.html -p 8000",
 		"build": "parcel build src/index.html --out-dir dist",
 		"lint": "eslint src/**/*.{js,jsx} --fix",
-		"prettier": "prettier --single-quote --trailing-comma none --write src/**/*.{js,jsx,json,css,scss,md}"
+		"prettier": "prettier --single-quote --trailing-comma none --write src/**/*.{js,jsx,json,css,scss,md}",
+		"start:host": "parcel src/index.html -p 8001 --no-hmr",
+		"start:client": "parcel src/index.html -p 8002 --no-hmr"
 	},
 	"author": "psychonull",
 	"license": "MIT",
@@ -33,7 +35,9 @@
 		"prettier": "^2.0.4"
 	},
 	"dependencies": {
-		"phaser": "^3.22.0"
+		"peerjs": "^1.2.0",
+		"phaser": "^3.22.0",
+		"webrtc-adapter": "^7.5.1"
 	},
 	"parcelCleanPaths": [
 		"dist"
