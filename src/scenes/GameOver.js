@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { getStringColor } from '/utils/color';
 
-const READY_TIMEOUT = 2000;
+const READY_TIMEOUT = 1000;
 
 class GameOver extends Phaser.Scene {
   constructor() {
@@ -16,7 +16,7 @@ class GameOver extends Phaser.Scene {
         ? 'Player 1 WINS'
         : data.player1 < data.player2
         ? 'Player 2 WINS'
-        : "It's a tie. Sad tie.";
+        : 'YOU BOTH LOSE';
     this.textColor = getStringColor(data.winnerColor);
   }
 
@@ -44,11 +44,11 @@ class GameOver extends Phaser.Scene {
     this.text1.setOrigin(0.5);
     this.text2 = this.add.text(
       world.width / 2,
-      50 + world.height / 2,
-      'press any key to start a new match',
+      75 + world.height / 2,
+      'press <any key> to start a new match',
       {
         fontFamily: 'monospace',
-        fontSize: 32,
+        fontSize: 28,
         color: this.textColor
       }
     );
