@@ -65,7 +65,7 @@ class PlayerShoot {
   fire(pos, angle) {
     if (this.group.getChildren(true).length >= this.bulletMaxAlive) {
       // TODO: sound of no more bullets
-      return;
+      return true;
     }
 
     const shoot = this.scene.add.circle(pos.x, pos.y, this.radius, this.color);

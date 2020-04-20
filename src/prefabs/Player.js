@@ -31,6 +31,7 @@ class Player {
 
     this.bulletTime = 0;
     this.bulletFireVel = 250;
+    this.shootBackForce = 0.5;
     this.moveVel = 0.03;
     this.radius = 15;
     this.haloRadius = this.radius * 10;
@@ -151,13 +152,21 @@ class Player {
         opponentPos.x - playerPos.x
       );
 
-      this.bullets.fire(
+      const didFire = !this.bullets.fire(
         {
           x: playerPos.x + this.radius * 2 * Math.cos(dir),
           y: playerPos.y + this.radius * 2 * Math.sin(dir)
         },
         dir
       );
+
+      if (didFire)
+        this.player.applyForce(
+          new Phaser.Math.Vector2(
+            this.shootBackForce * Math.cos(dir),
+            this.shootBackForce * Math.sin(dir)
+          ).scale(-1)
+        );
 
       this.bulletTime = this.scene.game.getTime() + this.bulletFireVel;
     }
