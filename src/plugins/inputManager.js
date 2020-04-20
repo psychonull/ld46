@@ -10,7 +10,7 @@ const processGamepadValue = (gamepad, path) => {
   if (type === 'B') {
     return gamepad.buttons[index].value;
   } else {
-    const axisValue = gamepad.axes[index].getValue();
+    const axisValue = gamepad.axes[index]?.getValue();
     if (sign) {
       const multiplier = sign === '-' ? -1 : 1;
       return Math.max(axisValue * multiplier, 0);
