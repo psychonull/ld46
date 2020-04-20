@@ -7,7 +7,7 @@ const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 // const boundsLabelRegEx = /^Rectangle Body$/;
 
-const ROUND_TIME = 90 * 1000;
+const ROUND_TIME = 60 * 1000;
 let customPipeline;
 
 class World extends Phaser.Scene {
@@ -42,6 +42,17 @@ class World extends Phaser.Scene {
     this.load.image('white_square', '/images/white_square.png');
     this.load.image('grid', '/images/grid.png');
 
+    this.load.audio('bg1', ['/sound/bg1.mp3']);
+    this.load.audio('bg2', ['/sound/bg2.mp3']);
+    this.load.audio('hit1', ['/sound/hit1.wav']);
+    this.load.audio('shoot1', ['/sound/shoot1.wav']);
+    this.load.audio('countdown', ['/sound/countdown.wav']);
+    this.load.audio('countdownFinal', ['/sound/countdown-final.wav']);
+    this.load.audio('buttonpress', ['/sound/buttonpress.wav']);
+    this.load.audio('nobullets', ['/sound/nobullets.wav']);
+    this.load.audio('magnet', ['/sound/magnet.wav']);
+    this.load.audio('alarm', ['/sound/alarm.wav']);
+
     if (!customPipeline) {
       customPipeline = this.game.renderer.addPipeline(
         'Custom',
@@ -51,7 +62,33 @@ class World extends Phaser.Scene {
     }
   }
 
+  initAudio() {
+    this.audio = {
+      bg: [
+        this.sound.add('bg1', { volume: 0.5 }),
+        this.sound.add('bg2', { volume: 0.5 })
+      ],
+      hit: [this.sound.add('hit1')],
+      shoot: [this.sound.add('shoot1')],
+      countdown: [this.sound.add('countdown', { volume: 0.1 })],
+      countdownFinal: [this.sound.add('countdownFinal', { volume: 0.2 })],
+      buttonpress: [this.sound.add('buttonpress', { volume: 0.5 })],
+      nobullets: [this.sound.add('nobullets', { volume: 0.1 })],
+      magnet: [this.sound.add('magnet', { volume: 0.4 })],
+      alarm: [this.sound.add('alarm', { volume: 0.4 })]
+    };
+  }
+
+  playAudio(type) {
+    Phaser.Utils.Array.GetRandom(this.audio[type]).play();
+  }
+
+  stopAudio(type) {
+    this.audio[type].forEach((a) => a.stop());
+  }
+
   create() {
+    this.initAudio();
     const sz = this.worldSize;
     const minimapZoom = 0.1;
     const miniSz = {
@@ -113,6 +150,8 @@ class World extends Phaser.Scene {
     ];
 
     this.countDownToStart = new CountDownToStart({
+      x: sz.w / 2,
+      y: sz.h / 2,
       scene: this,
       onComplete: () => {
         this.startGame();
@@ -121,6 +160,7 @@ class World extends Phaser.Scene {
   }
 
   startGame() {
+    this.playAudio('bg');
     this.players[0].setOpponent(this.players[1]);
     this.players[1].setOpponent(this.players[0]);
 
@@ -188,6 +228,7 @@ class World extends Phaser.Scene {
     this.scene.stop('gui');
     const player1 = this.players[0].data.get('score');
     const player2 = this.players[1].data.get('score');
+    this.stopAudio('bg');
     this.scene.start('gameover', {
       player1,
       player2,
@@ -245,6 +286,7 @@ class World extends Phaser.Scene {
 
     const playerPain = this.players.find((p) => p.number === hitPlayerNumber);
     playerPain.setHit();
+    this.playAudio('hit');
 
     const playerScored = hitPlayerNumber === 1 ? 2 : 1;
     const playerScore = this.players.find((p) => p.number === playerScored);

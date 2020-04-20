@@ -3,6 +3,8 @@ import { msToTime } from '/utils/time';
 import { getStringColor } from '../utils/color';
 
 const baseY = 650;
+const TIME_ALARM_FROM = 5 * 1000;
+
 class GUI extends Phaser.Scene {
   constructor() {
     super({ key: 'gui' });
@@ -73,7 +75,22 @@ class GUI extends Phaser.Scene {
     const end = this.scene.get('Game').data.get('endTime');
     const diff = end - this.time.now;
     if (diff < 0) {
+      this.timeAlarm = null;
       return;
+    }
+    if (diff <= TIME_ALARM_FROM && !this.timeAlarm) {
+      this.timeAlarm = this.tweens.add({
+        targets: [this.timer],
+        alpha: { from: 0.5, to: 1 },
+        duration: 1000,
+        repeat: Math.max(0, Math.abs(TIME_ALARM_FROM / 1000) - 1),
+        onStart: () => {
+          this.scene.get('Game').playAudio('alarm');
+        },
+        onRepeat: () => {
+          this.scene.get('Game').playAudio('alarm');
+        }
+      });
     }
     this.timer.setText(msToTime(diff));
   }

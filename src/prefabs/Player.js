@@ -108,6 +108,7 @@ class Player {
       .setCollidesWith(this.collisionGroups.playerHalos)
       .setOnCollide(() => {
         this.haloTween.restart();
+        this.scene.playAudio('magnet');
       });
 
     this.scene.matter.add.constraint(this.player, this.playerHalo, 0);
