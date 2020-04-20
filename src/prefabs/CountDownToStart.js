@@ -25,12 +25,13 @@ class CountDownToStart {
       this.text.setText('');
       return this.onComplete();
     }
-    this.showMessage(currentMessage, !!this.messages[this.currentIndex + 1]);
+    this.showMessage(currentMessage, !this.messages[this.currentIndex + 1]);
     this.currentIndex++;
   }
   showMessage(str, isLastMessage) {
     this.text.setScale(1);
-    if (!isLastMessage) {
+    if (isLastMessage) {
+      this.scene.playAudio('countdownFinal');
       this.scene.tweens.add({
         targets: this.text,
         duration: 333,
@@ -40,6 +41,7 @@ class CountDownToStart {
         color: 'pink'
       });
     } else {
+      this.scene.playAudio('countdown');
       this.scene.tweens.add({
         targets: this.text,
         duration: 333,

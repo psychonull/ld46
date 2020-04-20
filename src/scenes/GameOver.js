@@ -18,6 +18,7 @@ class GameOver extends Phaser.Scene {
         ? 'Player 2 WINS'
         : 'YOU BOTH LOSE';
     this.textColor = getStringColor(data.winnerColor);
+    this.buttonPressSound = this.sound.add('buttonpress');
   }
 
   create() {
@@ -88,6 +89,7 @@ class GameOver extends Phaser.Scene {
       this.canBeReady
     ) {
       this.p1Ready = true;
+      this.buttonPressSound.play();
       this.p1ReadyText.setAlpha(1).setText('P1 READY');
     }
     if (
@@ -96,6 +98,7 @@ class GameOver extends Phaser.Scene {
       this.canBeReady
     ) {
       this.p2Ready = true;
+      this.buttonPressSound.play();
       this.p2ReadyText.setAlpha(1).setText('P2 READY');
     }
     if (this.p1Ready && this.p2Ready) {

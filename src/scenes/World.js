@@ -42,6 +42,14 @@ class World extends Phaser.Scene {
     this.load.image('white', '/images/white.png');
     this.load.image('white_square', '/images/white_square.png');
 
+    this.load.audio('bg1', ['/sound/bg1.mp3']);
+    this.load.audio('hit1', ['/sound/hit1.wav']);
+    this.load.audio('shoot1', ['/sound/shoot1.wav']);
+    this.load.audio('countdown', ['/sound/countdown.wav']);
+    this.load.audio('countdownFinal', ['/sound/countdown-final.wav']);
+    this.load.audio('buttonpress', ['/sound/buttonpress.wav']);
+    this.load.audio('nobullets', ['/sound/nobullets.wav']);
+
     if (!customPipeline) {
       customPipeline = this.game.renderer.addPipeline(
         'Custom',
@@ -51,7 +59,24 @@ class World extends Phaser.Scene {
     }
   }
 
+  initAudio() {
+    this.audio = {
+      bg: [this.sound.add('bg1')],
+      hit: [this.sound.add('hit1')],
+      shoot: [this.sound.add('shoot1')],
+      countdown: [this.sound.add('countdown')],
+      countdownFinal: [this.sound.add('countdownFinal')],
+      buttonpress: [this.sound.add('buttonpress')],
+      nobullets: [this.sound.add('nobullets')]
+    };
+  }
+
+  playAudio(type) {
+    Phaser.Utils.Array.GetRandom(this.audio[type]).play();
+  }
+
   create() {
+    this.initAudio();
     const sz = this.worldSize;
     const minimapZoom = 0.1;
     const miniSz = {
@@ -116,6 +141,7 @@ class World extends Phaser.Scene {
   }
 
   startGame() {
+    this.playAudio('bg');
     this.players[0].setOpponent(this.players[1]);
     this.players[1].setOpponent(this.players[0]);
 
@@ -243,6 +269,7 @@ class World extends Phaser.Scene {
     const player = this.players.find((p) => p.number === playerScored);
     if (!player) console.warn('player not found for number', playerScored);
     player.data.set('score', parseInt(player.data.get('score') || 0, 10) + 1);
+    this.playAudio('hit');
   }
 
   // onHitBounds(bullet, bound) {
