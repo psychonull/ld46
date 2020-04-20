@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { msToTime } from '/utils/time';
 
-const baseY = 600;
+const baseY = 650;
 
 class GUI extends Phaser.Scene {
   constructor() {
@@ -12,61 +12,72 @@ class GUI extends Phaser.Scene {
 
   create() {
     const gameScene = this.scene.get('Game');
-    this.createPlayer1(gameScene.players[0]);
-    this.createPlayer2(gameScene.players[1]);
+    this.centerX = this.sys.game.canvas.width / 2;
+    this.createPlayer(gameScene.players[0], 1);
+    this.createPlayer(gameScene.players[1], 2);
     this.createRemainingTime();
   }
 
   createRemainingTime() {
-    this.add.text(300, 75 + baseY, `TIME`, {
-      color: 'white',
-      fontFamily: 'monospace',
-      fontSize: 26
-    });
-    this.timer = this.add.text(300, 99 + baseY, ``, {
-      color: 'white',
-      fontFamily: 'monospace',
-      fontSize: 26
-    });
+    this.add
+      .text(this.centerX, 75 + baseY, `TIME`, {
+        color: 'white',
+        fontFamily: 'monospace'
+      })
+      .setOrigin(0.5, 1)
+      .setAlpha(0.5);
+    this.timer = this.add
+      .text(this.centerX, 80 + baseY, ``, {
+        color: 'white',
+        fontFamily: 'monospace',
+        fontSize: 26
+      })
+      .setOrigin(0.5, 0);
   }
 
-  createPlayer1(player) {
-    this.player1 = player;
-    const offsetX = 100;
-    this.add.text(100 + offsetX, 75 + baseY, `Player 1`, {
-      color: 'white',
-      fontFamily: 'monospace'
-    });
-    const score = this.add.text(
-      100 + offsetX,
-      100 + baseY,
-      player.data.get('score') || '0'
-    );
+  createPlayer(player, number) {
+    const offsetX = this.centerX + 100 * (number === 1 ? -1 : 1);
+    const originX = number === 1 ? 1 : 0;
+    const dataColor = player.data.get('color');
+    const color =
+      typeof dataColor === 'number'
+        ? Phaser.Display.Color.IntegerToColor(dataColor).rgba
+        : dataColor;
+    const scoreTitle = this.add
+      .text(offsetX, 75 + baseY, `Player ${number}`, {
+        color,
+        fontFamily: 'monospace'
+      })
+      .setOrigin(originX, 1)
+      .setAlpha(0.5);
+    const score = this.add
+      .text(offsetX, 80 + baseY, player.data.get('score') || '0', {
+        fontSize: 26,
+        color,
+        fontFamily: 'monospace'
+      })
+      .setOrigin(originX, 0)
+      .setAlpha(0.5);
     player.data.events.on('changedata-score', (playerFromEvent, newScore) => {
       score.setText(newScore);
-    });
-  }
-
-  createPlayer2(player) {
-    this.player2 = player;
-    const offsetX = 400;
-    this.add.text(100 + offsetX, 75 + baseY, `Player 2`, {
-      color: 'white',
-      fontFamily: 'monospace'
-    });
-    const score = this.add.text(
-      100 + offsetX,
-      100 + baseY,
-      player.data.get('score') || '0'
-    );
-    player.data.events.on('changedata-score', (playerFromEvent, newScore) => {
-      score.setText(newScore);
+      this.tweens.add({
+        targets: [scoreTitle, score],
+        duration: 300,
+        scale: { from: 1, to: 1.1 },
+        alpha: { from: 0.5, to: 1 },
+        ease: 'Bounce.easeIn',
+        yoyo: true
+      });
     });
   }
 
   update() {
     const end = this.scene.get('Game').data.get('endTime');
-    this.timer.setText(msToTime(end - this.time.now));
+    const diff = end - this.time.now;
+    if (diff < 0) {
+      return;
+    }
+    this.timer.setText(msToTime(diff));
   }
 }
 

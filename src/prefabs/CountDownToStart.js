@@ -1,5 +1,5 @@
 class CountDownToStart {
-  constructor({ scene, onComplete, interval = 1000 }) {
+  constructor({ scene, onComplete, interval = 500 }) {
     this.scene = scene;
     this.onComplete = onComplete;
     this.currentIndex = 0;
@@ -25,17 +25,28 @@ class CountDownToStart {
       this.text.setText('');
       return this.onComplete();
     }
-    this.showMessage(currentMessage);
+    this.showMessage(currentMessage, !!this.messages[this.currentIndex + 1]);
     this.currentIndex++;
   }
-  showMessage(str) {
+  showMessage(str, isLastMessage) {
     this.text.setScale(1);
-    this.scene.tweens.add({
-      targets: this.text,
-      duration: 333,
-      scale: 0.5,
-      color: 'pink'
-    });
+    if (!isLastMessage) {
+      this.scene.tweens.add({
+        targets: this.text,
+        duration: 333,
+        ease: 'Quad.easeOut',
+        scale: 9,
+        alpha: 0,
+        color: 'pink'
+      });
+    } else {
+      this.scene.tweens.add({
+        targets: this.text,
+        duration: 333,
+        scale: 0.5,
+        color: 'pink'
+      });
+    }
     this.text.setText(str);
   }
 }

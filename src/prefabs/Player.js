@@ -20,6 +20,7 @@ class Player {
       new Phaser.Events.EventEmitter()
     );
     this.data.set('score', 0);
+    this.data.set('color', color);
 
     this.bulletTime = 0;
     this.bulletFireVel = 250;
