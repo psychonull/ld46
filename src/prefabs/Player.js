@@ -17,6 +17,8 @@ class Player {
     this.x = x;
     this.y = y;
     this.color = color;
+    this.hitColor = 0xff0000;
+    this.recoverTime = 1000;
 
     this.scene = scene;
     this.input = input;
@@ -170,10 +172,53 @@ class Player {
         yoyo: true
       })
       .stop();
+
+    this.hitTween = this.scene.tweens
+      .add({
+        targets: this.player,
+        tweenStep: 10,
+        onUpdate: (tween, targets) => {
+          targets
+            .setStrokeStyle(3, this.hitColor, 1)
+            .setFillStyle(
+              this.hitColor,
+              Phaser.Math.Interpolation.Bezier(
+                [0.8, 1.0, 0.8, 0.6, 0.4, 0.2, 0],
+                tween.progress
+              )
+            )
+            .setAlpha(1);
+        },
+        onComplete: () => {
+          this.player.setStrokeStyle(3, this.color, 1);
+        },
+        ease: 'Cubic',
+        duration: 300,
+        repeat: 0,
+        yoyo: true
+      })
+      .stop();
   }
 
   setOpponent(player) {
     this.opponent = player;
+  }
+
+  setHit() {
+    this.hitTween.restart();
+    this.justHit = true;
+
+    this.playerAim.setVisible(false);
+    this.playerFX.setVisible(false);
+    this.playerHalo.setVisible(false);
+
+    this.scene.time.delayedCall(this.recoverTime, () => {
+      this.playerAim.setVisible(true);
+      this.playerFX.setVisible(true);
+      this.playerHalo.setVisible(true);
+
+      this.justHit = false;
+    });
   }
 
   tryFire() {
@@ -187,6 +232,7 @@ class Player {
       );
 
       if (didFire) {
+        this.scene.cameras.main.shake(100, 0.01);
         this.fireTween.restart();
 
         this.player.applyForce(
@@ -238,24 +284,28 @@ class Player {
     }
 
     this.setAimTo();
+
     if (this.input.get(PLAYER_INPUT.projectile_shoot)) {
       this.tryFire();
     }
 
-    if (this.input.get(PLAYER_INPUT.left)) {
-      this.player.thrustBack(this.moveVel);
-    } else if (this.input.get(PLAYER_INPUT.right)) {
-      this.player.thrust(this.moveVel);
+    if (!this.justHit) {
+      if (this.input.get(PLAYER_INPUT.left)) {
+        this.player.thrustBack(this.moveVel);
+      } else if (this.input.get(PLAYER_INPUT.right)) {
+        this.player.thrust(this.moveVel);
+      }
+
+      if (this.input.get(PLAYER_INPUT.up)) {
+        this.player.thrustLeft(this.moveVel);
+      } else if (this.input.get(PLAYER_INPUT.down)) {
+        this.player.thrustRight(this.moveVel);
+      }
+
+      this.updateRamble();
+      this.updateAiming();
     }
 
-    if (this.input.get(PLAYER_INPUT.up)) {
-      this.player.thrustLeft(this.moveVel);
-    } else if (this.input.get(PLAYER_INPUT.down)) {
-      this.player.thrustRight(this.moveVel);
-    }
-
-    this.updateRamble();
-    this.updateAiming();
     this.bullets.update();
   }
 }

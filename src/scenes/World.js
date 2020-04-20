@@ -39,8 +39,8 @@ class World extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('white', '/images/white.png');
     this.load.image('white_square', '/images/white_square.png');
+    this.load.image('grid', '/images/grid.png');
 
     if (!customPipeline) {
       customPipeline = this.game.renderer.addPipeline(
@@ -59,6 +59,10 @@ class World extends Phaser.Scene {
       h: sz.h * minimapZoom
     };
 
+    const grid = this.add
+      .tileSprite(0, 0, sz.w * 2, sz.h * 2, 'grid')
+      .setAlpha(0.1);
+
     this.playersCenter = this.add.circle(sz.w / 2, sz.h / 2, 5);
 
     this.cameras.main
@@ -76,7 +80,8 @@ class World extends Phaser.Scene {
       .setScroll(
         this.viewportSize.w - this.offsetPlayer * 2,
         this.viewportSize.h - this.offsetPlayer * 2
-      );
+      )
+      .ignore(grid);
 
     this.matter.enableCollisionEventsPlugin();
     this.matter.world.setBounds(0, 0, sz.w, sz.h);
@@ -238,11 +243,16 @@ class World extends Phaser.Scene {
       10
     );
 
-    const playerScored = hitPlayerNumber === 1 ? 2 : 1;
+    const playerPain = this.players.find((p) => p.number === hitPlayerNumber);
+    playerPain.setHit();
 
-    const player = this.players.find((p) => p.number === playerScored);
-    if (!player) console.warn('player not found for number', playerScored);
-    player.data.set('score', parseInt(player.data.get('score') || 0, 10) + 1);
+    const playerScored = hitPlayerNumber === 1 ? 2 : 1;
+    const playerScore = this.players.find((p) => p.number === playerScored);
+    if (!playerScore) console.warn('player not found for number', playerScored);
+    playerScore.data.set(
+      'score',
+      parseInt(playerScore.data.get('score') || 0, 10) + 1
+    );
   }
 
   // onHitBounds(bullet, bound) {
