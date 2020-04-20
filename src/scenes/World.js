@@ -136,16 +136,18 @@ class World extends Phaser.Scene {
     }
   }
 
-  onHitPlayer(bullet) {
+  onHitPlayer(bullet, playerHit) {
     console.log('onHitPlayer', bullet);
 
-    const playerNumber = parseInt(
-      playerShootLabelRegEx.exec(bullet.label)[1],
+    const hitPlayerNumber = parseInt(
+      playerLabelRegEx.exec(playerHit.label)[1],
       10
     );
 
-    const player = this.players.find((p) => p.number === playerNumber);
-    if (!player) console.warn('player not found for number', playerNumber);
+    const playerScored = hitPlayerNumber === 1 ? 2 : 1;
+
+    const player = this.players.find((p) => p.number === playerScored);
+    if (!player) console.warn('player not found for number', playerScored);
     player.data.set('score', parseInt(player.data.get('score') || 0, 10) + 1);
 
     // TODO: Reset Game
