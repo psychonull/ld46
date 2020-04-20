@@ -1,5 +1,5 @@
 class CountDownToStart {
-  constructor({ scene, onComplete, interval = 500 }) {
+  constructor({ scene, x, y, onComplete, interval = 500 }) {
     this.scene = scene;
     this.onComplete = onComplete;
     this.currentIndex = 0;
@@ -10,8 +10,7 @@ class CountDownToStart {
       callbackScope: this,
       loop: true
     });
-    const world = this.scene.sys.game.canvas;
-    this.text = this.scene.add.text(world.width / 2, world.height / 2, '', {
+    this.text = this.scene.add.text(x, y, '', {
       fontFamily: 'monospace',
       fontSize: 192,
       color: 'turquoise'

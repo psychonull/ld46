@@ -145,6 +145,8 @@ class World extends Phaser.Scene {
     ];
 
     this.countDownToStart = new CountDownToStart({
+      x: sz.w / 2,
+      y: sz.h / 2,
       scene: this,
       onComplete: () => {
         this.startGame();
