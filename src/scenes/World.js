@@ -7,7 +7,7 @@ const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 // const boundsLabelRegEx = /^Rectangle Body$/;
 
-const ROUND_TIME = 90 * 1000;
+const ROUND_TIME = 60 * 1000;
 let customPipeline;
 
 class World extends Phaser.Scene {
@@ -43,12 +43,15 @@ class World extends Phaser.Scene {
     this.load.image('white_square', '/images/white_square.png');
 
     this.load.audio('bg1', ['/sound/bg1.mp3']);
+    this.load.audio('bg2', ['/sound/bg2.mp3']);
     this.load.audio('hit1', ['/sound/hit1.wav']);
     this.load.audio('shoot1', ['/sound/shoot1.wav']);
     this.load.audio('countdown', ['/sound/countdown.wav']);
     this.load.audio('countdownFinal', ['/sound/countdown-final.wav']);
     this.load.audio('buttonpress', ['/sound/buttonpress.wav']);
     this.load.audio('nobullets', ['/sound/nobullets.wav']);
+    this.load.audio('magnet', ['/sound/magnet.wav']);
+    this.load.audio('alarm', ['/sound/alarm.wav']);
 
     if (!customPipeline) {
       customPipeline = this.game.renderer.addPipeline(
@@ -61,18 +64,27 @@ class World extends Phaser.Scene {
 
   initAudio() {
     this.audio = {
-      bg: [this.sound.add('bg1')],
+      bg: [
+        this.sound.add('bg1', { volume: 0.5 }),
+        this.sound.add('bg2', { volume: 0.5 })
+      ],
       hit: [this.sound.add('hit1')],
       shoot: [this.sound.add('shoot1')],
-      countdown: [this.sound.add('countdown')],
-      countdownFinal: [this.sound.add('countdownFinal')],
-      buttonpress: [this.sound.add('buttonpress')],
-      nobullets: [this.sound.add('nobullets')]
+      countdown: [this.sound.add('countdown', { volume: 0.1 })],
+      countdownFinal: [this.sound.add('countdownFinal', { volume: 0.2 })],
+      buttonpress: [this.sound.add('buttonpress', { volume: 0.5 })],
+      nobullets: [this.sound.add('nobullets', { volume: 0.1 })],
+      magnet: [this.sound.add('magnet', { volume: 0.4 })],
+      alarm: [this.sound.add('alarm', { volume: 0.4 })]
     };
   }
 
   playAudio(type) {
     Phaser.Utils.Array.GetRandom(this.audio[type]).play();
+  }
+
+  stopAudio(type) {
+    this.audio[type].forEach((a) => a.stop());
   }
 
   create() {
@@ -209,6 +221,7 @@ class World extends Phaser.Scene {
     this.scene.stop('gui');
     const player1 = this.players[0].data.get('score');
     const player2 = this.players[1].data.get('score');
+    this.stopAudio('bg');
     this.scene.start('gameover', {
       player1,
       player2,
