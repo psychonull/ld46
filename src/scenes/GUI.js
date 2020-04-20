@@ -3,7 +3,6 @@ import { msToTime } from '/utils/time';
 import { getStringColor } from '../utils/color';
 
 const baseY = 650;
-
 class GUI extends Phaser.Scene {
   constructor() {
     super({ key: 'gui' });
@@ -13,6 +12,7 @@ class GUI extends Phaser.Scene {
 
   create() {
     const gameScene = this.scene.get('Game');
+    this.cameras.main.setPipeline('Custom');
     this.centerX = this.sys.game.canvas.width / 2;
     this.createPlayer(gameScene.players[0], 1);
     this.createPlayer(gameScene.players[1], 2);

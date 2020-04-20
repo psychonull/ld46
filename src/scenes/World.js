@@ -1,12 +1,14 @@
 import Phaser from 'phaser';
 import Player from '/prefabs/Player';
 import CountDownToStart from '/prefabs/CountDownToStart';
+import CustomPipeline from '/prefabs/CustomPipeline';
 
 const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 // const boundsLabelRegEx = /^Rectangle Body$/;
 
 const ROUND_TIME = 9 * 1000;
+let customPipeline;
 
 class World extends Phaser.Scene {
   constructor() {
@@ -22,6 +24,13 @@ class World extends Phaser.Scene {
   preload() {
     this.load.image('white', '/images/white.png');
     this.load.image('white_square', '/images/white_square.png');
+    if (!customPipeline) {
+      customPipeline = this.game.renderer.addPipeline(
+        'Custom',
+        new CustomPipeline(this.game)
+      );
+      customPipeline.setFloat1('alpha', 1);
+    }
   }
 
   create() {
@@ -35,6 +44,7 @@ class World extends Phaser.Scene {
 
     this.matter.enableCollisionEventsPlugin();
     this.matter.world.setBounds(0, 0, sz.w, sz.h);
+    this.cameras.main.setPipeline('Custom');
 
     const collisionGroups = {
       playerHalos: this.matter.world.nextCategory()

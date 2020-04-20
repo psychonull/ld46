@@ -25,6 +25,8 @@ class GameOver extends Phaser.Scene {
     this.p2Ready = false;
     this.canBeReady = false;
 
+    this.cameras.main.setPipeline('Custom');
+
     this.time.addEvent({
       delay: READY_TIMEOUT,
       callback: () => {
