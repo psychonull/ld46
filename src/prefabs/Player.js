@@ -29,6 +29,8 @@ class Player {
     this.data.set('score', 0);
     this.data.set('color', color);
 
+    this.aimTo = new Phaser.Math.Vector2(0, 0);
+
     this.bulletTime = 0;
     this.bulletFireVel = 250;
     this.shootBackForce = 0.5;
@@ -56,6 +58,22 @@ class Player {
   createGameObjects() {
     this.player = this.scene.add.circle(this.x, this.y, this.radius);
     this.player.setStrokeStyle(3, this.color, 1);
+
+    this.playerAim = this.scene.add
+      .triangle(
+        this.x,
+        this.y,
+        0,
+        this.radius,
+        this.radius / 2,
+        0,
+        this.radius,
+        this.radius,
+        this.color,
+        0.1
+      )
+      .setAlpha(0)
+      .setScale(1.4, 2);
 
     this.playerFX = this.scene.add.circle(this.x, this.y, this.radius);
     this.playerFX.setStrokeStyle(3, this.color, 1);
@@ -144,27 +162,19 @@ class Player {
 
   tryFire() {
     if (this.scene.game.getTime() > this.bulletTime) {
-      let opponentPos = this.opponent.player.getCenter();
-      let playerPos = this.player.getCenter();
-
-      let dir = Math.atan2(
-        opponentPos.y - playerPos.y,
-        opponentPos.x - playerPos.x
-      );
-
       const didFire = !this.bullets.fire(
         {
-          x: playerPos.x + this.radius * 2 * Math.cos(dir),
-          y: playerPos.y + this.radius * 2 * Math.sin(dir)
+          x: this.player.getCenter().x + this.radius * 2 * Math.cos(this.aimTo),
+          y: this.player.getCenter().y + this.radius * 2 * Math.sin(this.aimTo)
         },
-        dir
+        this.aimTo
       );
 
       if (didFire)
         this.player.applyForce(
           new Phaser.Math.Vector2(
-            this.shootBackForce * Math.cos(dir),
-            this.shootBackForce * Math.sin(dir)
+            this.shootBackForce * Math.cos(this.aimTo),
+            this.shootBackForce * Math.sin(this.aimTo)
           ).scale(-1)
         );
 
@@ -172,10 +182,33 @@ class Player {
     }
   }
 
+  setAimTo() {
+    const opponentPos = this.opponent.player.getCenter();
+    const playerPos = this.player.getCenter();
+
+    this.aimTo = Math.atan2(
+      opponentPos.y - playerPos.y,
+      opponentPos.x - playerPos.x
+    );
+  }
+
+  updateAiming() {
+    const pos = new Phaser.Math.Vector2(
+      this.player.x + this.radius * 2.3 * Math.cos(this.aimTo),
+      this.player.y + this.radius * 2.3 * Math.sin(this.aimTo)
+    );
+
+    this.playerAim.setAlpha(1);
+    this.playerAim.setPosition(pos.x, pos.y);
+    this.playerAim.setRotation(this.aimTo + Math.PI / 2);
+  }
+
   update() {
     if (!this.scene.started) {
       return;
     }
+
+    this.setAimTo();
     if (this.input.get(PLAYER_INPUT.projectile_shoot)) {
       this.tryFire();
     }
@@ -192,6 +225,7 @@ class Player {
       this.player.thrustRight(this.moveVel);
     }
 
+    this.updateAiming();
     this.bullets.update();
   }
 }
