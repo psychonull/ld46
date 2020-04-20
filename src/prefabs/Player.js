@@ -125,19 +125,7 @@ class Player {
     this.scene.tweens.add({
       targets: this.playerFX,
       props: {
-        x: {
-          value: {
-            getStart: () => this.playerFX.x + random(-3, 3),
-            getEnd: () => this.player.x + random(-3, 3)
-          }
-        },
-        y: {
-          value: {
-            getStart: () => this.playerFX.y + random(-3, 3),
-            getEnd: () => this.player.y + random(-3, 3)
-          }
-        },
-        alpha: { start: 0, to: 0.5 },
+        alpha: { start: 0.1, to: 0.8 },
         scale: { start: 0.5, to: 1.1 }
       },
       ease: 'Bounce',
@@ -151,7 +139,7 @@ class Player {
         alpha: { start: 0, to: 1 }
       },
       ease: 'Cubic',
-      duration: 150,
+      duration: 100,
       repeat: Infinity
     });
   }
@@ -192,6 +180,16 @@ class Player {
     );
   }
 
+  updateRamble() {
+    const r = 1;
+    this.player.x += random(-r, r) / 10;
+    this.player.y += random(-r, r) / 10;
+
+    const r2 = 3;
+    this.playerFX.x = this.player.x + random(-r2, r2);
+    this.playerFX.y = this.player.y + random(-r2, r2);
+  }
+
   updateAiming() {
     const pos = new Phaser.Math.Vector2(
       this.player.x + this.radius * 2.3 * Math.cos(this.aimTo),
@@ -225,6 +223,7 @@ class Player {
       this.player.thrustRight(this.moveVel);
     }
 
+    this.updateRamble();
     this.updateAiming();
     this.bullets.update();
   }
