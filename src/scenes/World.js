@@ -7,23 +7,41 @@ const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 // const boundsLabelRegEx = /^Rectangle Body$/;
 
-const ROUND_TIME = 9 * 1000;
+const ROUND_TIME = 90 * 1000;
 let customPipeline;
 
 class World extends Phaser.Scene {
   constructor() {
     super('Game');
     this.started = false;
-    this.worldSize = {
+
+    this.viewportSize = {
       w: 1024,
       h: 768
     };
-    this.zoom = 1;
+
+    this.worldSize = {
+      w: this.viewportSize.w * 2,
+      h: this.viewportSize.h * 2
+    };
+
+    this.minZoom = 0.5;
+    this.maxZoom = 1.5;
+    this.zoom = this.minZoom;
+    this.offsetPlayer = 50;
+
+    this.minLength = 100;
+    this.maxLength =
+      Math.sqrt(
+        this.worldSize.w * this.worldSize.w +
+          this.worldSize.h * this.worldSize.h
+      ) / 2;
   }
 
   preload() {
     this.load.image('white', '/images/white.png');
     this.load.image('white_square', '/images/white_square.png');
+
     if (!customPipeline) {
       customPipeline = this.game.renderer.addPipeline(
         'Custom',
@@ -35,12 +53,30 @@ class World extends Phaser.Scene {
 
   create() {
     const sz = this.worldSize;
+    const minimapZoom = 0.1;
+    const miniSz = {
+      w: sz.w * minimapZoom,
+      h: sz.h * minimapZoom
+    };
+
+    this.playersCenter = this.add.circle(sz.w / 2, sz.h / 2, 5);
 
     this.cameras.main
       .setBackgroundColor('#041015')
       .setBounds(0, 0, sz.w, sz.h)
       .setZoom(this.zoom)
-      .setName('main');
+      .setName('main')
+      .startFollow(this.playersCenter);
+
+    this.minimap = this.cameras
+      .add(0, this.viewportSize.h - miniSz.h, miniSz.w, miniSz.h)
+      .setZoom(minimapZoom)
+      .setName('mini')
+      .setBackgroundColor('#000000')
+      .setScroll(
+        this.viewportSize.w - this.offsetPlayer * 2,
+        this.viewportSize.h - this.offsetPlayer * 2
+      );
 
     this.matter.enableCollisionEventsPlugin();
     this.matter.world.setBounds(0, 0, sz.w, sz.h);
@@ -55,6 +91,8 @@ class World extends Phaser.Scene {
         scene: this,
         input: this.customInput.players[0],
         color: 0xf207a4,
+        x: this.offsetPlayer,
+        y: this.offsetPlayer,
         number: 1,
         collisionGroups
       }),
@@ -62,8 +100,8 @@ class World extends Phaser.Scene {
         scene: this,
         input: this.customInput.players[1],
         color: 0x04db0c,
-        x: sz.w - 50,
-        y: sz.h - 50,
+        x: sz.w - this.offsetPlayer,
+        y: sz.h - this.offsetPlayer,
         number: 2,
         collisionGroups
       })
@@ -161,12 +199,35 @@ class World extends Phaser.Scene {
     if (this.players) {
       this.players.forEach((player) => player.update());
 
-      // CAMERA
+      const pos1 = new Phaser.Math.Vector2(
+        this.players[0].player.x,
+        this.players[0].player.y
+      );
+
+      const pos2 = new Phaser.Math.Vector2(
+        this.players[1].player.x,
+        this.players[1].player.y
+      );
+
+      this.playersCenter.x = (pos1.x + pos2.x) / 2;
+      this.playersCenter.y = (pos1.y + pos2.y) / 2;
+
+      this.cameras.main.setZoom(
+        Phaser.Math.Linear(
+          this.minZoom,
+          this.maxZoom,
+          1 -
+            Phaser.Math.Percent(
+              Phaser.Math.Distance.BetweenPoints(pos1, pos2),
+              this.minLength,
+              this.maxLength
+            )
+        )
+      );
     }
 
     const endTime = this.data.get('endTime');
     if (this.started && endTime && endTime <= this.time.now) {
-      // console.log(endTime, this.time.now, endTime > this.time.now);
       this.endGame();
     }
   }
@@ -182,8 +243,6 @@ class World extends Phaser.Scene {
     const player = this.players.find((p) => p.number === playerScored);
     if (!player) console.warn('player not found for number', playerScored);
     player.data.set('score', parseInt(player.data.get('score') || 0, 10) + 1);
-
-    // TODO: Reset Game
   }
 
   // onHitBounds(bullet, bound) {

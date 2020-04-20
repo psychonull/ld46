@@ -7,10 +7,9 @@ import GameOver from '/scenes/GameOver';
 import InputManagerPlugin from '/plugins/inputManager';
 
 const config = {
-  // pixelArt: true,
   type: Phaser.AUTO,
-  // width: 800,
-  // height: 600,
+  width: 1024,
+  height: 768,
   input: {
     gamepad: true
   },
@@ -27,7 +26,6 @@ const config = {
     default: 'matter',
     matter: {
       gravity: { y: 0 }
-      // https://photonstorm.github.io/phaser3-docs/Phaser.Types.Physics.Matter.html#.MatterDebugConfig__anchor
       // debug: {
       //   showBody: true,
       //   showStaticBody: true
