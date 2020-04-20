@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 
 import World from '/scenes/World';
 import GUI from '/scenes/GUI';
+import GameOver from '/scenes/GameOver';
 
 import InputManagerPlugin from '/plugins/inputManager';
 
@@ -33,7 +34,7 @@ const config = {
       // }
     }
   },
-  scene: [World, GUI]
+  scene: [World, GUI, GameOver]
 };
 
 const game = new Phaser.Game(config);

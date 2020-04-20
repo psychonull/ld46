@@ -122,7 +122,7 @@ class PlayerShoot {
           frequency: -1,
           tint: isSelected ? this.selectedColor : this.color,
           lifespan: { min: 200, max: 800 },
-          alpha: { start: 0, end: 0.3 },
+          alpha: { start: 0, end: 0.8 },
           scale: { start: 0, end: 0.1 },
           blendMode: 'ADD'
         })
