@@ -18,7 +18,8 @@ class Player {
     this.y = y;
     this.color = color;
     this.hitColor = 0xff0000;
-    this.recoverTime = 1000;
+    this.bulletTimeMultiplier = 1.5;
+    this.canShootWhenBlocked = true;
 
     this.scene = scene;
     this.input = input;
@@ -91,6 +92,15 @@ class Player {
       this.color
     );
     this.scene.cameras.main.ignore(this.playerMiniMap);
+
+    this.blockTimer = this.scene.add
+      .text(this.x, this.y, '', {
+        color: '#ff0000',
+        fontFamily: 'monospace',
+        fontSize: 40
+      })
+      .setOrigin(0.5, 1.5)
+      .setAlpha(0);
   }
 
   addPhysics() {
@@ -198,9 +208,6 @@ class Player {
             )
             .setAlpha(1);
         },
-        onComplete: () => {
-          this.player.setStrokeStyle(3, this.color, 1);
-        },
         ease: 'Cubic',
         duration: 300,
         repeat: 0,
@@ -213,21 +220,20 @@ class Player {
     this.opponent = player;
   }
 
-  setHit() {
-    this.hitTween.restart();
-    this.justHit = true;
+  setHit(delay) {
+    if (this.blocked) {
+      this.unblockAt += delay * this.bulletTimeMultiplier; // MS
+    } else {
+      this.hitTween.restart();
 
-    this.playerAim.setVisible(false);
-    this.playerFX.setVisible(false);
-    this.playerHalo.setVisible(false);
+      if (!this.canShootWhenBlocked) this.playerAim.setVisible(false);
+      this.playerFX.setVisible(false);
+      this.playerHalo.setVisible(false);
 
-    this.scene.time.delayedCall(this.recoverTime, () => {
-      this.playerAim.setVisible(true);
-      this.playerFX.setVisible(true);
-      this.playerHalo.setVisible(true);
-
-      this.justHit = false;
-    });
+      this.blockStartAt = this.scene.game.getTime();
+      this.blocked = true;
+      this.unblockAt = this.blockStartAt + delay * this.bulletTimeMultiplier;
+    }
   }
 
   tryFire() {
@@ -292,13 +298,25 @@ class Player {
       return;
     }
 
-    this.setAimTo();
+    if (this.blocked) {
+      this.blockTimer.setAlpha(1);
+      this.blockTimer.setText(
+        `${parseInt((this.unblockAt - this.scene.game.getTime()) / 1000, 10)}`
+      );
 
-    if (this.input.get(PLAYER_INPUT.projectile_shoot)) {
-      this.tryFire();
-    }
+      if (this.scene.game.getTime() >= this.unblockAt) {
+        this.player.setStrokeStyle(3, this.color, 1);
 
-    if (!this.justHit) {
+        if (!this.canShootWhenBlocked) this.playerAim.setVisible(true);
+        this.playerFX.setVisible(true);
+        this.playerHalo.setVisible(true);
+        this.blockTimer.setAlpha(0);
+
+        this.blocked = false;
+        this.blockStartAt = 0;
+        this.unblockAt = 0;
+      }
+    } else {
       if (this.input.get(PLAYER_INPUT.left)) {
         this.player.thrustBack(this.moveVel);
       } else if (this.input.get(PLAYER_INPUT.right)) {
@@ -312,10 +330,20 @@ class Player {
       }
 
       this.updateRamble();
+    }
+
+    if (!this.blocked || this.canShootWhenBlocked) {
+      this.setAimTo();
+
+      if (this.input.get(PLAYER_INPUT.projectile_shoot)) {
+        this.tryFire();
+      }
+
       this.updateAiming();
     }
 
     this.playerMiniMap.setPosition(this.player.x, this.player.y);
+    this.blockTimer.setPosition(this.player.x, this.player.y);
     this.bullets.update();
   }
 }

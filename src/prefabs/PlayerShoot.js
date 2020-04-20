@@ -82,6 +82,7 @@ class PlayerShoot {
     shoot.id = this.newId();
 
     shoot.particles = this.scene.add.particles('white_square');
+    shoot.startTime = this.scene.game.getTime();
     shoot.emitter = shoot.particles.createEmitter({
       speed: {
         onEmit: () => shoot.body.speed

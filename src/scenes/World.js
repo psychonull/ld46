@@ -285,7 +285,7 @@ class World extends Phaser.Scene {
     );
 
     const playerPain = this.players.find((p) => p.number === hitPlayerNumber);
-    playerPain.setHit();
+    playerPain.setHit(this.game.getTime() - bullet.gameObject.startTime);
     this.playAudio('hit');
 
     const playerScored = hitPlayerNumber === 1 ? 2 : 1;
