@@ -30,7 +30,7 @@
         right: 10px;
         top: 20px;
       }
-      #help-button {
+      .menu-button {
         color: #fff;
         font-weight: bold;
         text-decoration: none;
@@ -40,14 +40,14 @@
         border-radius: 50%;
         background-color: #a00f81;
       }
-      #help-button:hover {
+      .menu-button:hover {
         background-color: #fff;
         color: #a00f81;
       }
       .hidden {
         display: none;
       }
-      #help-popup {
+      .popup {
         background-color: #04171f;
         color: #dedede;
         border: 4px dotted #1c5b75;
@@ -62,7 +62,7 @@
         padding: 1em 2em;
         margin: 0 auto;
       }
-      #help-popup code {
+      .popup code {
         color: white;
         font-weight: bold;
         font-family: monospace;
@@ -92,13 +92,68 @@
         color: #8e285c;
         background: white;
       }
+      a.secondary, a.secondary:hover {
+        background: none;
+      }
+      .form .item {
+        padding: 5px;
+      }
+      .form span {
+        text-align: right;
+        display: inline-block;
+        width: 200px;
+      }
+      .form input {
+        margin-left: 5px;
+        width: 100px;
+      }
+      #preset-list, #preset-list li {
+        display: inline-block;
+        padding: 2px;
+      }
     </style>
 	</head>
 	<body>
     <div class="menu">
-      <a href="#" id="help-button">?</a>
+      <a href="#" id="config-button" class="menu-button">⚙</a>
+      <a href="#" id="help-button" class="menu-button">?</a>
     </div>
-    <div id="help-popup" class="hidden">
+    <div id="config-popup" class="popup hidden">
+      <h1>Settings</h1>
+      <div class="presets">
+        <span>Load Preset:</span>
+        <ul style="list-style: none;" id="preset-list">
+        </ul>
+      </div>
+      <form id="config-form" class="form">
+        <div class="item">
+          <span>Round Time (seconds)</span>
+          <input type="number" name="cTime" id="cTime" min="10" max="1000">
+        </div>
+        <div class="item">
+          <span>Player Speed</span>
+          <input type="number" name="cPlayerSpeed" id="cPlayerSpeed" min="0.5" max="50" step="0.5">
+        </div>
+        <div class="item">
+          <span>Max Projectiles</span>
+          <input type="number" name="cMaxBullets" id="cMaxBullets" min="1" max="1000">
+        </div>
+        <div class="item">
+          <span>Projectile speed</span>
+          <input type="number" name="cBulletSpeed" id="cBulletSpeed" min="0.5" max="50" step="0.5">
+        </div>
+        <div class="item">
+          <span>Reload time</span>
+          <input type="number" name="cReloadTime" id="cReloadTime" min="1" max="30000">
+        </div>
+      </form>
+      <p>
+        Changes will be effective starting next match after saving (you can reload to speed things up)
+      </p>
+      <a href="#" id="config-cancel-button" class="secondary">CANCEL</a>
+      <a href="#" id="config-save-button">SAVE</a>
+    </div>
+    <div id="help-popup" class="popup hidden">
       <div class="obj">
         <h1>Objective</h1>
         <p>Avoid enemy projectiles while shooting and commanding yours</p>
