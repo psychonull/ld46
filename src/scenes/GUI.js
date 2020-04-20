@@ -8,8 +8,8 @@ class GUI extends Phaser.Scene {
   preload() {}
 
   create() {
-    const gameScene = this.scene.get('Game');
-    gameScene.players.forEach(this.createPlayerUI, this);
+    // const gameScene = this.scene.get('Game');
+    // gameScene.players.forEach(this.createPlayerUI, this);
   }
 
   createPlayerUI(player, index) {

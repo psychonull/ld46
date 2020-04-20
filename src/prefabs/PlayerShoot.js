@@ -1,4 +1,5 @@
-import { counter } from '/utils/math';
+import Phaser from 'phaser';
+import { random, counter } from '/utils/math';
 import PLAYER_INPUT from 'utils/PlayerInputEnum';
 
 // GameObject Factory to manage all shoots for one player
@@ -22,8 +23,7 @@ class PlayerShoot {
     this.selectTime = 100;
     this.thrust = 4;
     this.angularVel = 0.06;
-    this.width = 15;
-    this.height = 5;
+    this.radius = 5;
     this.bulletMaxAlive = 2;
 
     this.group = this.scene.add.group();
@@ -68,15 +68,33 @@ class PlayerShoot {
       return;
     }
 
-    const shoot = this.scene.add.rectangle(
-      pos.x,
-      pos.y,
-      this.width,
-      this.height,
-      this.color
-    );
+    const shoot = this.scene.add.circle(pos.x, pos.y, this.radius, this.color);
 
     shoot.id = this.newId();
+
+    shoot.particles = this.scene.add.particles('white_square');
+    shoot.emitter = shoot.particles.createEmitter({
+      speed: {
+        onEmit: () => shoot.body.speed
+      },
+      lifespan: {
+        onEmit: () =>
+          Phaser.Math.Percent(shoot.body.speed, 0, random(100, 300)) * 5000
+      },
+      alpha: {
+        onEmit: () =>
+          Phaser.Math.Percent(shoot.body.speed, 0, random(100, 300)) * 1000
+      },
+      tint: {
+        onEmit: () =>
+          this.selectedBullet && this.selectedBullet.id == shoot.id
+            ? this.selectedColor
+            : this.color
+      },
+      scale: { start: 0.2, end: 0 },
+      blendMode: 'ADD',
+      follow: shoot
+    });
 
     this.scene.matter.add.gameObject(shoot, {
       label: `player-shoot-${this.playerNumber}`,
@@ -92,13 +110,33 @@ class PlayerShoot {
     );
 
     shoot.setOnCollide((/*{ bodyA, bodyB }*/) => {
+      const isSelected = !!(
+        this.selectedBullet && this.selectedBullet.id === shoot.id
+      );
+
+      shoot.particles
+        .createEmitter({
+          speed: { min: 10, max: 70 },
+          x: shoot.x,
+          y: shoot.y,
+          frequency: -1,
+          tint: isSelected ? this.selectedColor : this.color,
+          lifespan: { min: 200, max: 800 },
+          alpha: { start: 0, end: 0.3 },
+          scale: { start: 0, end: 0.1 },
+          blendMode: 'ADD'
+        })
+        .explode(100, shoot.x, shoot.y);
+
       this.scene.matter.world.remove(shoot);
       this.group.killAndHide(shoot);
       this.group.remove(shoot);
 
-      if (this.selectedBullet && this.selectedBullet.id === shoot.id) {
-        this.selectedBullet = null;
-      }
+      this.scene.time.delayedCall(700, () => {
+        shoot.particles.destroy();
+      });
+
+      if (isSelected) this.selectedBullet = null;
     });
 
     this.group.add(shoot);

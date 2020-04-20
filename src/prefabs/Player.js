@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import PlayerShoot from '/prefabs/PlayerShoot';
 import PLAYER_INPUT from 'utils/PlayerInputEnum';
 
+import { random } from 'utils/math';
+
 class Player {
   constructor({
     scene,
@@ -12,9 +14,14 @@ class Player {
     y = 30,
     collisionGroups
   }) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
+
     this.scene = scene;
     this.input = input;
     this.number = number;
+
     this.data = new Phaser.Data.DataManager(
       this,
       new Phaser.Events.EventEmitter()
@@ -25,29 +32,45 @@ class Player {
     this.moveVel = 0.03;
     this.radius = 15;
     this.haloRadius = this.radius * 10;
+    this.collisionGroups = collisionGroups;
 
-    this.player = this.scene.add.circle(x, y, this.radius);
-    this.player.setStrokeStyle(3, color, 1);
-    this.scene.matter.add.gameObject(this.player, {
-      label: `player-${this.number}`,
-      circleRadius: this.radius,
-      frictionAir: 0.1,
-      density: 0.02
+    this.createGameObjects();
+    this.addPhysics();
+    this.createFx();
+
+    var darkerColor = Phaser.Display.Color.IntegerToColor(color).darken(30);
+    var lighterColor = Phaser.Display.Color.IntegerToColor(color).lighten(50);
+
+    this.bullets = new PlayerShoot({
+      scene: scene,
+      input: input,
+      color: darkerColor.color32,
+      selectedColor: lighterColor.color32,
+      playerNumber: this.number
     });
+  }
 
-    this.playerHalo = this.scene.add.circle(x, y, this.haloRadius);
+  createGameObjects() {
+    this.player = this.scene.add.circle(this.x, this.y, this.radius);
+    this.player.setStrokeStyle(3, this.color, 1);
+
+    this.playerFX = this.scene.add.circle(this.x, this.y, this.radius);
+    this.playerFX.setStrokeStyle(3, this.color, 1);
+
+    this.playerHalo = this.scene.add.circle(this.x, this.y, this.haloRadius);
     this.playerHalo.setStrokeStyle(2, 0xffffff, 1);
     this.playerHalo.setAlpha(0);
+  }
 
-    const showHalo = this.scene.tweens.add({
-      targets: this.playerHalo,
-      alpha: { start: 0, to: 0.3 },
-      scale: { start: 0.7, to: 1.1 },
-      ease: 'Bounce',
-      duration: 200,
-      repeat: 0,
-      yoyo: true
-    });
+  addPhysics() {
+    this.scene.matter.add
+      .gameObject(this.player, {
+        label: `player-${this.number}`,
+        circleRadius: this.radius,
+        frictionAir: 0.1,
+        density: 0.02
+      })
+      .setFixedRotation();
 
     this.scene.matter.add
       .gameObject(this.playerHalo, {
@@ -58,22 +81,57 @@ class Player {
         density: 0.00001
       })
       .setBounce(1)
-      .setCollisionCategory(collisionGroups.playerHalos)
-      .setCollidesWith(collisionGroups.playerHalos)
+      .setCollisionCategory(this.collisionGroups.playerHalos)
+      .setCollidesWith(this.collisionGroups.playerHalos)
       .setOnCollide(() => {
-        showHalo.restart();
+        this.haloTween.restart();
       });
 
     this.scene.matter.add.constraint(this.player, this.playerHalo, 0);
+  }
 
-    this.player.setFixedRotation();
+  createFx() {
+    this.haloTween = this.scene.tweens.add({
+      targets: this.playerHalo,
+      alpha: { start: 0, to: 0.3 },
+      scale: { start: 0.7, to: 1.1 },
+      ease: 'Bounce',
+      duration: 200,
+      repeat: 0,
+      yoyo: true
+    });
 
-    this.bullets = new PlayerShoot({
-      scene: scene,
-      input,
-      color,
-      collisionCategory: this.shootCollisionCategory,
-      playerNumber: this.number
+    this.scene.tweens.add({
+      targets: this.playerFX,
+      props: {
+        x: {
+          value: {
+            getStart: () => this.playerFX.x + random(-3, 3),
+            getEnd: () => this.player.x + random(-3, 3)
+          }
+        },
+        y: {
+          value: {
+            getStart: () => this.playerFX.y + random(-3, 3),
+            getEnd: () => this.player.y + random(-3, 3)
+          }
+        },
+        alpha: { start: 0, to: 0.5 },
+        scale: { start: 0.5, to: 1.1 }
+      },
+      ease: 'Bounce',
+      duration: 50,
+      repeat: Infinity
+    });
+
+    this.scene.tweens.add({
+      targets: this.player,
+      props: {
+        alpha: { start: 0, to: 1 }
+      },
+      ease: 'Cubic',
+      duration: 150,
+      repeat: Infinity
     });
   }
 

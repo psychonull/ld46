@@ -10,7 +10,10 @@ class World extends Phaser.Scene {
     super('Game');
   }
 
-  preload() {}
+  preload() {
+    this.load.image('white', '/images/white.png');
+    this.load.image('white_square', '/images/white_square.png');
+  }
 
   create() {
     this.matter.enableCollisionEventsPlugin();
@@ -20,17 +23,20 @@ class World extends Phaser.Scene {
       playerHalos: this.matter.world.nextCategory()
     };
 
+    this.cameras.main.setBackgroundColor('#041015');
+
     this.players = [
       new Player({
         scene: this,
         input: this.customInput.players[0],
+        color: 0xf207a4,
         number: 1,
         collisionGroups
       }),
       new Player({
         scene: this,
         input: this.customInput.players[1],
-        color: 0x0000ff,
+        color: 0x04db0c,
         x: 500,
         y: 600,
         number: 2,
