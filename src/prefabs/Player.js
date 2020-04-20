@@ -18,8 +18,6 @@ class Player {
     this.y = y;
     this.color = color;
     this.hitColor = 0xff0000;
-    this.bulletTimeMultiplier = 1.5;
-    this.canShootWhenBlocked = true;
 
     this.scene = scene;
     this.input = input;
@@ -36,6 +34,8 @@ class Player {
 
     this.aimTo = new Phaser.Math.Vector2(0, 0);
 
+    this.bulletTimeMultiplier = gameConfig.bulletTimeMultiplier;
+    this.canShootWhenBlocked = gameConfig.canShootWhenBlocked;
     this.bulletTime = 0;
     this.bulletFireVel = gameConfig.reloadTime;
     this.shootBackForce = 0.5;
@@ -225,6 +225,10 @@ class Player {
   }
 
   setHit(delay) {
+    if (!this.bulletTimeMultiplier) {
+      return;
+    }
+
     if (this.blocked) {
       this.unblockAt += delay * this.bulletTimeMultiplier; // MS
     } else {

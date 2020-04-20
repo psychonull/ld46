@@ -21,14 +21,13 @@
         border: 2px solid #051923;
       }
       .menu {
-        margin:auto;
-        padding:0;
-        max-height: 3%;
-        text-align: justify;
-        padding-left: 100px;
         position: absolute;
-        right: 10px;
-        top: 20px;
+        right: .1em;
+        top: .1em;
+        display: flex;
+        flex: 1;
+        align-items: center;
+        flex-direction: column;
       }
       .menu-button {
         color: #fff;
@@ -36,9 +35,12 @@
         text-decoration: none;
         font-size: 2.5em;
         line-height: 0.7;
-        padding: 0 0.35em;
+        padding: 0.3em 0.2em;
         border-radius: 50%;
         background-color: #a00f81;
+        margin: .1em;
+        text-align: center;
+        min-width: 0.8em;
       }
       .menu-button:hover {
         background-color: #fff;
@@ -95,17 +97,28 @@
       a.secondary, a.secondary:hover {
         background: none;
       }
+      .form {
+        max-width: 450px;
+        margin: 0 auto;
+      }
       .form .item {
         padding: 5px;
       }
       .form span {
         text-align: right;
         display: inline-block;
-        width: 200px;
+        width: 250px;
       }
       .form input {
         margin-left: 5px;
         width: 100px;
+        border: 1px solid #fff;
+        padding: 0.3em 0.5em;
+        background-color: #8e285c;
+        color: #fff;
+        border-radius: 2px;
+        font-family: monospace;
+        font-size: 1em;
       }
       #preset-list, #preset-list li {
         display: inline-block;
@@ -145,6 +158,14 @@
         <div class="item">
           <span>Reload time</span>
           <input type="number" name="cReloadTime" id="cReloadTime" min="1" max="30000">
+        </div>
+        <div class="item">
+          <span>Projectile Time Multiplier</span>
+          <input type="number" name="cBulletTimeMultiplier" id="cBulletTimeMultiplier" step="0.1" min="0" max="3">
+        </div>
+        <div class="item">
+          <span>Can Shoot When Blocked</span>
+          <input type="checkbox" name="cCanShootWhenBlocked" id="cCanShootWhenBlocked">
         </div>
       </form>
       <p>

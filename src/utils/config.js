@@ -5,7 +5,10 @@ const mappings = [
   { selector: '#cPlayerSpeed', propName: 'playerSpeed' },
   { selector: '#cMaxBullets', propName: 'maxBullets' },
   { selector: '#cBulletSpeed', propName: 'bulletSpeed' },
-  { selector: '#cReloadTime', propName: 'reloadTime' }
+  { selector: '#cBulletSpeed', propName: 'bulletSpeed' },
+  { selector: '#cReloadTime', propName: 'reloadTime' },
+  { selector: '#cBulletTimeMultiplier', propName: 'bulletTimeMultiplier' },
+  { selector: '#cCanShootWhenBlocked', propName: 'canShootWhenBlocked' }
 ];
 
 const KEY = 'ld46config';
@@ -26,6 +29,8 @@ export const saveConfig = (config) => {
       name: 'custom'
     })
   );
+
+  setTimeout(() => window.location.reload(), 1000);
 };
 
 export const presetsToForm = (configs) => {
@@ -46,16 +51,40 @@ export const presetsToForm = (configs) => {
 
 export const configToForm = (config) => {
   mappings.forEach((mapping) => {
-    document.querySelector(mapping.selector).value = config[mapping.propName];
+    const ele = document.querySelector(mapping.selector);
+    const value = config[mapping.propName];
+
+    switch (ele.type) {
+      case 'checkbox':
+        ele.checked = value;
+        break;
+      default:
+        ele.value = value;
+        break;
+    }
   });
 };
 
 export const formToConfig = () => {
-  return mappings.reduce(
-    (a, b) => ({
+  return mappings.reduce((a, b) => {
+    const ele = document.querySelector(b.selector);
+    let value;
+
+    switch (ele.type) {
+      case 'number':
+        value = Number(ele.value);
+        break;
+      case 'checkbox':
+        value = ele.checked;
+        break;
+      default:
+        value = ele.value;
+        break;
+    }
+
+    return {
       ...a,
-      [b.propName]: Number(document.querySelector(b.selector).value)
-    }),
-    {}
-  );
+      [b.propName]: value
+    };
+  }, {});
 };
