@@ -9,7 +9,9 @@ class PlayerShoot {
     input,
     playerNumber,
     color = 0xaa0000,
-    selectedColor = 0xff0000
+    selectedColor = 0xff0000,
+    bulletMaxAlive = 2,
+    thrust = 4
   }) {
     this.scene = scene;
     this.input = input;
@@ -21,10 +23,10 @@ class PlayerShoot {
     this.selectedBullet = null;
     this.selectVel = 250;
     this.selectTime = 100;
-    this.thrust = 4;
+    this.thrust = thrust;
     this.angularVel = 0.06;
     this.radius = 5;
-    this.bulletMaxAlive = 2;
+    this.bulletMaxAlive = bulletMaxAlive;
 
     this.group = this.scene.add.group();
   }

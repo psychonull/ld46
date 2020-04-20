@@ -25,6 +25,8 @@ class Player {
     this.input = input;
     this.number = number;
 
+    const gameConfig = this.scene.data.get('gameConfig');
+
     this.data = new Phaser.Data.DataManager(
       this,
       new Phaser.Events.EventEmitter()
@@ -35,9 +37,9 @@ class Player {
     this.aimTo = new Phaser.Math.Vector2(0, 0);
 
     this.bulletTime = 0;
-    this.bulletFireVel = 250;
+    this.bulletFireVel = gameConfig.reloadTime;
     this.shootBackForce = 0.5;
-    this.moveVel = 0.03;
+    this.moveVel = gameConfig.playerSpeed / 100; // 0.03;
     this.radius = 15;
     this.haloRadius = this.radius * 10;
     this.collisionGroups = collisionGroups;
@@ -54,7 +56,9 @@ class Player {
       input: input,
       color: darkerColor.color32,
       selectedColor: lighterColor.color32,
-      playerNumber: this.number
+      playerNumber: this.number,
+      bulletMaxAlive: gameConfig.maxBullets,
+      thrust: gameConfig.bulletSpeed
     });
   }
 

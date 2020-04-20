@@ -7,7 +7,6 @@ const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 // const boundsLabelRegEx = /^Rectangle Body$/;
 
-const ROUND_TIME = 60 * 1000;
 let customPipeline;
 
 class World extends Phaser.Scene {
@@ -88,6 +87,7 @@ class World extends Phaser.Scene {
   }
 
   create() {
+    this.data.set('gameConfig', window.gameConfig);
     this.initAudio();
     const sz = this.worldSize;
     const minimapZoom = 0.1;
@@ -218,7 +218,7 @@ class World extends Phaser.Scene {
       },
       this
     );
-    this.data.set('endTime', this.time.now + ROUND_TIME);
+    this.data.set('endTime', this.time.now + window.gameConfig.time * 1000);
     this.scene.launch('gui');
     this.started = true;
   }
