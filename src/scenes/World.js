@@ -38,19 +38,19 @@ class World extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('white_square', '/images/white_square.png');
-    this.load.image('grid', '/images/grid.png');
+    this.load.image('white_square', './images/white_square.png');
+    this.load.image('grid', './images/grid.png');
 
-    this.load.audio('bg1', ['/sound/bg1.mp3']);
-    this.load.audio('bg2', ['/sound/bg2.mp3']);
-    this.load.audio('hit1', ['/sound/hit1.wav']);
-    this.load.audio('shoot1', ['/sound/shoot1.wav']);
-    this.load.audio('countdown', ['/sound/countdown.wav']);
-    this.load.audio('countdownFinal', ['/sound/countdown-final.wav']);
-    this.load.audio('buttonpress', ['/sound/buttonpress.wav']);
-    this.load.audio('nobullets', ['/sound/nobullets.wav']);
-    this.load.audio('magnet', ['/sound/magnet.wav']);
-    this.load.audio('alarm', ['/sound/alarm.wav']);
+    this.load.audio('bg1', ['./sound/bg1.mp3']);
+    this.load.audio('bg2', ['./sound/bg2.mp3']);
+    this.load.audio('hit1', ['./sound/hit1.wav']);
+    this.load.audio('shoot1', ['./sound/shoot1.wav']);
+    this.load.audio('countdown', ['./sound/countdown.wav']);
+    this.load.audio('countdownFinal', ['./sound/countdown-final.wav']);
+    this.load.audio('buttonpress', ['./sound/buttonpress.wav']);
+    this.load.audio('nobullets', ['./sound/nobullets.wav']);
+    this.load.audio('magnet', ['./sound/magnet.wav']);
+    this.load.audio('alarm', ['./sound/alarm.wav']);
 
     if (!customPipeline) {
       customPipeline = this.game.renderer.addPipeline(
