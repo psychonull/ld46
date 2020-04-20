@@ -12,6 +12,11 @@ class World extends Phaser.Scene {
   constructor() {
     super('Game');
     this.started = false;
+    this.worldSize = {
+      w: 1024,
+      h: 768
+    };
+    this.zoom = 1;
   }
 
   preload() {
@@ -20,16 +25,21 @@ class World extends Phaser.Scene {
   }
 
   create() {
+    const sz = this.worldSize;
+
+    this.cameras.main
+      .setBackgroundColor('#041015')
+      .setBounds(0, 0, sz.w, sz.h)
+      .setZoom(this.zoom)
+      .setName('main');
+
     this.matter.enableCollisionEventsPlugin();
-    this.matter.world.setBounds();
+    this.matter.world.setBounds(0, 0, sz.w, sz.h);
 
     const collisionGroups = {
       playerHalos: this.matter.world.nextCategory()
     };
 
-    this.cameras.main.setBackgroundColor('#041015');
-
-    const world = this.sys.game.canvas;
     this.players = [
       new Player({
         scene: this,
@@ -42,8 +52,8 @@ class World extends Phaser.Scene {
         scene: this,
         input: this.customInput.players[1],
         color: 0x04db0c,
-        x: world.width - 50,
-        y: world.height - 50,
+        x: sz.w - 50,
+        y: sz.h - 50,
         number: 2,
         collisionGroups
       })
@@ -55,7 +65,6 @@ class World extends Phaser.Scene {
         this.startGame();
       }
     });
-    // this.startGame();
   }
 
   startGame() {
@@ -133,7 +142,10 @@ class World extends Phaser.Scene {
   update() {
     if (this.players) {
       this.players.forEach((player) => player.update());
+
+      // CAMERA
     }
+
     const endTime = this.data.get('endTime');
     if (this.started && endTime && endTime <= this.time.now) {
       // console.log(endTime, this.time.now, endTime > this.time.now);

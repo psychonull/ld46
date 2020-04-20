@@ -32,7 +32,8 @@ class GUI extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: 26
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(0.5, 0)
+      .setAlpha(0.5);
   }
 
   createPlayer(player, number) {
