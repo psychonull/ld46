@@ -6,7 +6,7 @@ const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 // const boundsLabelRegEx = /^Rectangle Body$/;
 
-const ROUND_TIME = 90 * 1000;
+const ROUND_TIME = 9 * 1000;
 
 class World extends Phaser.Scene {
   constructor() {
@@ -133,9 +133,17 @@ class World extends Phaser.Scene {
   endGame() {
     this.started = false;
     this.scene.stop('gui');
+    const player1 = this.players[0].data.get('score');
+    const player2 = this.players[1].data.get('score');
     this.scene.start('gameover', {
-      player1: this.players[0].data.get('score'),
-      player2: this.players[1].data.get('score')
+      player1,
+      player2,
+      winnerColor:
+        player1 > player2
+          ? this.players[0].data.get('color')
+          : player1 < player2
+          ? this.players[1].data.get('color')
+          : 'white'
     });
   }
 

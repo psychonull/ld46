@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { msToTime } from '/utils/time';
+import { getStringColor } from '../utils/color';
 
 const baseY = 650;
 
@@ -39,11 +40,7 @@ class GUI extends Phaser.Scene {
   createPlayer(player, number) {
     const offsetX = this.centerX + 100 * (number === 1 ? -1 : 1);
     const originX = number === 1 ? 1 : 0;
-    const dataColor = player.data.get('color');
-    const color =
-      typeof dataColor === 'number'
-        ? Phaser.Display.Color.IntegerToColor(dataColor).rgba
-        : dataColor;
+    const color = getStringColor(player.data.get('color'));
     const scoreTitle = this.add
       .text(offsetX, 75 + baseY, `Player ${number}`, {
         color,
