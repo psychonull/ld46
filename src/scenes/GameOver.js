@@ -10,7 +10,6 @@ class GameOver extends Phaser.Scene {
   preload() {}
 
   init(data) {
-    console.log('init', data);
     this.msg =
       data.player1 > data.player2
         ? 'Player 1 WINS'
@@ -32,8 +31,6 @@ class GameOver extends Phaser.Scene {
       callbackScope: this,
       loop: false
     });
-    // const gameScene = this.scene.get('Game');
-    console.log(this.data.get('player1'));
     const world = this.sys.game.canvas;
     this.text1 = this.add.text(world.width / 2, world.height / 2, this.msg, {
       fontFamily: 'monospace',

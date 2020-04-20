@@ -116,7 +116,6 @@ class World extends Phaser.Scene {
   }
 
   endGame() {
-    console.log('end');
     this.started = false;
     this.scene.stop('gui');
     this.scene.start('gameover', {
@@ -137,8 +136,6 @@ class World extends Phaser.Scene {
   }
 
   onHitPlayer(bullet, playerHit) {
-    console.log('onHitPlayer', bullet);
-
     const hitPlayerNumber = parseInt(
       playerLabelRegEx.exec(playerHit.label)[1],
       10
