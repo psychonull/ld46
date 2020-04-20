@@ -142,6 +142,34 @@ class Player {
       duration: 100,
       repeat: Infinity
     });
+
+    this.fireTween = this.scene.tweens
+      .add({
+        targets: this.player,
+        tweenStep: 10,
+        onUpdate: (tween, targets) => {
+          targets
+            .setFillStyle(
+              this.color,
+              Phaser.Math.Interpolation.Bezier(
+                [0.8, 1.0, 0.8, 0.6, 0.4, 0.2, 0],
+                tween.progress
+              )
+            )
+            .setAlpha(1)
+            .setScale(
+              Phaser.Math.Interpolation.Bezier(
+                [1.3, 1.6, 1.5, 1.4, 1.3, 1.2, 1],
+                tween.progress
+              )
+            );
+        },
+        ease: 'Cubic',
+        duration: 300,
+        repeat: 0,
+        yoyo: true
+      })
+      .stop();
   }
 
   setOpponent(player) {
@@ -158,13 +186,16 @@ class Player {
         this.aimTo
       );
 
-      if (didFire)
+      if (didFire) {
+        this.fireTween.restart();
+
         this.player.applyForce(
           new Phaser.Math.Vector2(
             this.shootBackForce * Math.cos(this.aimTo),
             this.shootBackForce * Math.sin(this.aimTo)
           ).scale(-1)
         );
+      }
 
       this.bulletTime = this.scene.game.getTime() + this.bulletFireVel;
     }
