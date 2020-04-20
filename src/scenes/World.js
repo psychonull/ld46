@@ -113,7 +113,7 @@ class World extends Phaser.Scene {
       .add(0, this.viewportSize.h - miniSz.h, miniSz.w, miniSz.h)
       .setZoom(minimapZoom)
       .setName('mini')
-      .setBackgroundColor('#000000')
+      .setBackgroundColor('rgba(0,0,0,0.3)')
       .setScroll(
         this.viewportSize.w - this.offsetPlayer * 2,
         this.viewportSize.h - this.offsetPlayer * 2

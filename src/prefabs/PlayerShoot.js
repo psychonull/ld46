@@ -71,6 +71,13 @@ class PlayerShoot {
     this.scene.playAudio('shoot');
 
     const shoot = this.scene.add.circle(pos.x, pos.y, this.radius, this.color);
+    shoot.miniMap = this.scene.add.circle(
+      pos.x,
+      pos.y,
+      this.radius * 4,
+      this.color
+    );
+    this.scene.cameras.main.ignore(shoot.miniMap);
 
     shoot.id = this.newId();
 
@@ -130,6 +137,7 @@ class PlayerShoot {
         })
         .explode(100, shoot.x, shoot.y);
 
+      shoot.miniMap.destroy();
       this.scene.matter.world.remove(shoot);
       this.group.killAndHide(shoot);
       this.group.remove(shoot);
@@ -171,6 +179,10 @@ class PlayerShoot {
         this.thrust * Math.sin(this.selectedBullet.rotation)
       );
     }
+
+    this.group.getChildren(true).forEach((shoot) => {
+      shoot.miniMap.setPosition(shoot.x, shoot.y);
+    });
   }
 }
 

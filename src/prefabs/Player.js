@@ -83,6 +83,14 @@ class Player {
     this.playerHalo = this.scene.add.circle(this.x, this.y, this.haloRadius);
     this.playerHalo.setStrokeStyle(2, 0xffffff, 1);
     this.playerHalo.setAlpha(0);
+
+    this.playerMiniMap = this.scene.add.circle(
+      this.x,
+      this.y,
+      this.radius * 2,
+      this.color
+    );
+    this.scene.cameras.main.ignore(this.playerMiniMap);
   }
 
   addPhysics() {
@@ -307,6 +315,7 @@ class Player {
       this.updateAiming();
     }
 
+    this.playerMiniMap.setPosition(this.player.x, this.player.y);
     this.bullets.update();
   }
 }
