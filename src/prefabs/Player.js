@@ -19,6 +19,7 @@ class Player {
       this,
       new Phaser.Events.EventEmitter()
     );
+    this.data.set('score', 0);
 
     this.bulletTime = 0;
     this.bulletFireVel = 250;
@@ -104,6 +105,9 @@ class Player {
   }
 
   update() {
+    if (!this.scene.started) {
+      return;
+    }
     if (this.input.get(PLAYER_INPUT.projectile_shoot)) {
       this.tryFire();
     }

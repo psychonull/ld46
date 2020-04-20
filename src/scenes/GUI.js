@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { msToTime } from '/utils/time';
 
 const baseY = 600;
 
@@ -18,6 +19,11 @@ class GUI extends Phaser.Scene {
 
   createRemainingTime() {
     this.add.text(300, 75 + baseY, `TIME`, {
+      color: 'white',
+      fontFamily: 'monospace',
+      fontSize: 26
+    });
+    this.timer = this.add.text(300, 99 + baseY, ``, {
       color: 'white',
       fontFamily: 'monospace',
       fontSize: 26
@@ -56,6 +62,11 @@ class GUI extends Phaser.Scene {
     player.data.events.on('changedata-score', (playerFromEvent, newScore) => {
       score.setText(newScore);
     });
+  }
+
+  update() {
+    const end = this.scene.get('Game').data.get('endTime');
+    this.timer.setText(msToTime(end - this.time.now));
   }
 }
 

@@ -6,6 +6,8 @@ const playerLabelRegEx = /^player-(\d)$/;
 const playerShootLabelRegEx = /^player-shoot-(\d)$/;
 // const boundsLabelRegEx = /^Rectangle Body$/;
 
+const ROUND_TIME = 90 * 1000;
+
 class World extends Phaser.Scene {
   constructor() {
     super('Game');
@@ -22,6 +24,7 @@ class World extends Phaser.Scene {
       playerHalos: this.matter.world.nextCategory()
     };
 
+    const world = this.sys.game.canvas;
     this.players = [
       new Player({
         scene: this,
@@ -33,8 +36,8 @@ class World extends Phaser.Scene {
         scene: this,
         input: this.customInput.players[1],
         color: 0x0000ff,
-        x: 500,
-        y: 600,
+        x: world.width - 50,
+        y: world.height - 50,
         number: 2,
         collisionGroups
       })
@@ -107,13 +110,29 @@ class World extends Phaser.Scene {
       },
       this
     );
+    this.data.set('endTime', this.time.now + ROUND_TIME);
     this.scene.launch('gui');
     this.started = true;
+  }
+
+  endGame() {
+    console.log('end');
+    this.started = false;
+    this.scene.stop('gui');
+    this.scene.start('gameover', {
+      player1: this.players[0].data.get('score'),
+      player2: this.players[1].data.get('score')
+    });
   }
 
   update() {
     if (this.players) {
       this.players.forEach((player) => player.update());
+    }
+    const endTime = this.data.get('endTime');
+    if (this.started && endTime && endTime <= this.time.now) {
+      // console.log(endTime, this.time.now, endTime > this.time.now);
+      this.endGame();
     }
   }
 

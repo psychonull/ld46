@@ -61,6 +61,9 @@ export default class InputManager extends Phaser.Plugins.ScenePlugin {
         index,
         get: function (alias) {
           return this.keys[alias].isDown;
+        },
+        getAny: function () {
+          return Object.keys(cfg).some((alias) => this.get(alias));
         }
       };
     });
@@ -85,6 +88,11 @@ export default class InputManager extends Phaser.Plugins.ScenePlugin {
           );
         }
         return keyboardValue || gamepadValue;
+      };
+      player.getAny = function () {
+        return Object.keys(player.gamepadConfig).some((alias) =>
+          player.get(alias)
+        );
       };
     });
   }
