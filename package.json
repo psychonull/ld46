@@ -4,7 +4,7 @@
 	"description": "A template project for Phaser3 using Parceljs",
 	"scripts": {
 		"start": "parcel src/index.html -p 8000",
-		"build": "parcel build src/index.html --out-dir docs --public-url '.'",
+		"build": "parcel build src/index.html --out-dir docs --public-url .",
 		"lint": "eslint src/**/*.{js,jsx} --fix",
 		"prettier": "prettier --single-quote --trailing-comma none --write src/**/*.{js,jsx,json,css,scss,md}"
 	},
